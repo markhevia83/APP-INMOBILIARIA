@@ -1,12 +1,19 @@
 {
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "test": "node --test tests/continuity.test.mjs",
+    "test:e2e": "node tests/browser-cycle.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.57.4",
-    "vite": "7.1.7",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "@esbuild/linux-x64": "0.25.12"
-  }
+    "vite": "7.1.7"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "@playwright/test": "1.58.2",
+    "esbuild": "0.25.12"
+  },
+  "type": "module"
 }
