@@ -42,6 +42,15 @@ The browser test uses an installed Edge browser by default; set `PLAYWRIGHT_CHAN
 
 Screenshots are produced under ignored `selfia-app/test-results/`. The database tests also cover transaction rollback, retry duplication, stale edits, moved/skipped outcomes, anonymous denial and cross-user links. The map test covers insufficient evidence, pending decisions and unsafe plan URLs.
 
+The six Edge entrypoints also pass Deno's type checker. To repeat the local runtime authentication test from the repository root with Deno installed:
+
+```text
+deno check --no-lock supabase/functions/selfia-chat/index.ts supabase/functions/selfia-context/index.ts supabase/functions/selfia-daily/index.ts supabase/functions/selfia-motivation/index.ts supabase/functions/selfia-discover/index.ts supabase/functions/selfia-onboarding/index.ts
+deno test --no-lock --allow-read=supabase/functions --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY supabase/tests/auth-runtime.test.ts
+```
+
+This test loads the actual handlers and Supabase client in Deno. All six reject missing sessions, invalid tokens and a publishable key presented as a user token. It checks preflight and unsupported methods, and fails on any database or model request. Auth responses are local fixtures; Deno has no network permission. It verifies runtime guards without claiming live Supabase Auth or deployed Edge verification.
+
 ## Isolated cloud verification still required
 
 The existing Vercel preview and production use the SAME Supabase project; that project has no development branch. Do not apply the migration or deploy changed functions to that project for testing.
