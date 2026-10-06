@@ -51,9 +51,9 @@ deno test --no-lock --allow-read=supabase/functions --allow-env=SUPABASE_URL,SUP
 
 This test loads the actual handlers and Supabase client in Deno. All six reject missing sessions, invalid tokens and a publishable key presented as a user token. It checks preflight and unsupported methods, and fails on any database or model request. Auth responses are local fixtures; Deno has no network permission. It verifies runtime guards without claiming live Supabase Auth or deployed Edge verification.
 
-## Isolated cloud verification still required
+## Isolated cloud verification
 
-The existing Vercel preview and production use the SAME Supabase project; that project has no development branch. Do not apply the migration or deploy changed functions to that project for testing.
+The initial Vercel preview shared the production Supabase project. Do not apply the migration or deploy changed functions to that production project for testing. The new isolated configuration below supersedes that initial preview configuration.
 
 1. Obtain an existing isolated Supabase project with the baseline schema, or create a Supabase development branch after organization/cost confirmation.
 2. Apply `supabase/migrations/20261006142249_continuity_cycle.sql` to that isolated project only.
@@ -62,9 +62,17 @@ The existing Vercel preview and production use the SAME Supabase project; that p
 5. Create synthetic accounts only there, run the live cycle, verify denial between users and run security advisors on the isolated database.
 6. Check a preview deployment with the matching commit and live model responses. Only then consider a separate production rollout.
 
-Without an isolated backend, this branch's new writes and calls are blocked; existing reads/login remain available. Production aliases and main remain unchanged.
+On 2026-10-06, the authorized branch creation was rejected because the organization is on the Free plan. After separate confirmation of the quoted $0/month project cost, **SELF-IA Pruebas** (`tleqdegnzeukonbbrrzk`, eu-west-1) was created instead. No production data was copied. The baseline was restored from the seven existing schema migrations, then the continuity migration was applied. All six functions are ACTIVE, using their checked custom user-token authentication.
+
+Only the safe Git branch's Vercel PREVIEW variables point to this new project. Deployment `dpl_GTQtaNbRymr3TjTNrDudT5wiYgZQ`, commit `e6924be7873e061517f79e66d824e4fad1fc445b`, is READY at https://self-ia-mobile-6ko8isymo-self-ia.vercel.app . Its target is preview (null in the API); production configuration and aliases were not changed.
+
+`pnpm test:cloud` passes against real Supabase Auth, PostgREST/RLS, RPCs and deployed Edge guards with two synthetic accounts. It covers transaction retries, links between situation/action/goal, partial outcome, explicit learning, correction/audit, withdrawal, stale edits and cross-user isolation. Its initial turn is a declared fixture sent directly to the persistence RPC, not a generated model response. Local ignored files `.verification-tools/cloud-public.json` and `cloud-users.json` supply the explicitly allowed test URL and synthetic credentials; the harness refuses production and never prints tokens/passwords. Each attempt uses unique markers and preserves test records.
+
+Authenticated chat currently returns `503 ai_not_configured`: the new project has no OPENAI_API_KEY. Live model conversation/continuity and discovery remain pending. The published mobile browser check also remains pending: Vercel Authentication intercepted it, and automatic approval rejected generating a shareable bypass link. No protection was disabled.
+
+The test project's security advisor reports the leaked-password protection warning, with no database/RLS lints: [remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection). Production aliases and main remain unchanged.
 
 ## Limits
 
-Memory withdrawal excludes attributable context and conservatively excludes untraceable legacy personalization; it does not delete historical records. Some older relationships have no provenance until the user explicitly reconnects them. The cloud migration, Edge runtime and live AI responses remain unverified until the isolated environment is available. This branch is a reviewable implementation, not approval to publish to production.
+Memory withdrawal excludes attributable context and conservatively excludes untraceable legacy personalization; it does not delete historical records. Some older relationships have no provenance until the user explicitly reconnects them. Cloud persistence and deployed access guards are verified; live AI responses and the protected published browser flow remain pending. This branch is a reviewable implementation, not approval to publish to production.
 
