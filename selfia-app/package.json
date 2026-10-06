@@ -3,7 +3,8 @@
     "build": "vite build",
     "test": "node --test tests/continuity.test.mjs",
     "test:e2e": "node tests/browser-cycle.mjs",
-    "test:cloud": "node tests/cloud-cycle.mjs"
+    "test:cloud": "node tests/cloud-cycle.mjs",
+    "test:live": "node tests/live-model-cycle.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.57.4",
