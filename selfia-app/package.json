@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build": "vite build",
-    "test": "node --test tests/continuity.test.mjs tests/astra-repairs.test.mjs",
+    "test": "node --test tests/continuity.test.mjs tests/astra-repairs.test.mjs tests/followup-context.test.mjs",
     "test:e2e": "node tests/browser-cycle.mjs",
     "test:cloud": "node --dns-result-order=ipv4first tests/cloud-cycle.mjs",
     "test:live": "node --dns-result-order=ipv4first tests/live-model-cycle.mjs"

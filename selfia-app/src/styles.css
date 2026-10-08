@@ -4,3 +4,5 @@
 
 /* Leave room for the sticky composer so accepted actions stay tappable on mobile. */
 .chatbox{padding-bottom:130px}.newSubject{margin-bottom:10px;padding:9px 12px;border-radius:12px;background:#e4f4f8;color:#146079}
+
+.chatText p{margin:0 0 10px;white-space:normal}.chatText p:last-child{margin-bottom:0}.chatText ul,.chatText ol{padding-left:22px;margin:8px 0}.agendaBody p{white-space:pre-wrap;overflow-wrap:anywhere}.agendaBody a{display:inline-block;padding:10px 0;color:#087b91}

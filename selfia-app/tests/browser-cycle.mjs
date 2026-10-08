@@ -12,12 +12,12 @@ const code=bundle.outputFiles[0].text,css=await readFile('src/styles.css','utf8'
 const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/app.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html');res.end(req.url==='/app.js'?code:req.url==='/style.css'?css:'<html lang="es"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/app.js"></script></html>')});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const base='http://127.0.0.1:'+server.address().port;
-const db=new PGlite();await db.exec(await readFile('tests/baseline.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261006142249_continuity_cycle.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261008143624_astra_continuity_repairs.sql','utf8'));
+const db=new PGlite();await db.exec(await readFile('tests/baseline.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261006142249_continuity_cycle.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261008143624_astra_continuity_repairs.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261008182709_audit_followup_context.sql','utf8'));
 await db.exec("insert into auth.users values ('"+uid+"');set role authenticated;");await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid]);
 await db.query("insert into profiles(user_id,onboarding_status) values($1,'skipped')",[uid]);
 const q=async(sql,args=[])=> (await db.query(sql,args)).rows;
 const scalar=async(sql,args=[])=>Object.values((await q(sql,args))[0])[0];
-const collect=async()=>{const data={};for(const [field,table] of Object.entries({memories:'memories',history:'messages',sources:'messages',situations:'situations',commitments:'commitments',agenda:'agenda_events',goals:'goals',reviews:'action_reviews',memoryUses:'turn_receipts'}))data[field]=await q('select * from '+table);return continuityContext(data)};
+const collect=async()=>{const data={};for(const [field,table] of Object.entries({memories:'memories',history:'messages',sources:'messages',situations:'situations',commitments:'commitments',agenda:'agenda_events',goals:'goals',reviews:'action_reviews',memoryUses:'turn_receipts',revisions:'memory_revisions'}))data[field]=await q('select * from '+table);return continuityContext(data)};
 const rpcNames=new Set(['selfia_accept_action','selfia_schedule_commitment','selfia_review_action','selfia_revise_memory','selfia_correct_review']);
 let lastContext,realRequests=0;
 let page;
@@ -38,7 +38,7 @@ try{
     else if(slug==='selfia-chat'){
      lastContext=await collect();
      const cid=body.conversation_id||await scalar("insert into conversations(user_id,title) values($1,'Synthetic browser') returning id",[uid]);
-     const turn={context_memory_ids:lastContext.memories.map(m=>m.id),context_memory_versions:Object.fromEntries(lastContext.memories.map(m=>[m.id,m.updated_at])),reply:lastContext.memories.length?'Retomamos lo que te ayudó: '+lastContext.memories.map(m=>m.content).join('; '):'Podemos preparar un guion de diez minutos.',life_area:'work',intervention:'PROPOSE_ACTION',situation:{action:'create',situation_id:null,title:'Reunión pendiente',summary:'Preparar una reunión'},commitment:{create:true,what:'Preparar un guion de diez minutos',why:'Facilitar la reunión'},memory:{content:''}};
+     const turn={context_memory_ids:lastContext.memories.map(m=>m.id),context_memory_versions:Object.fromEntries(lastContext.memories.map(m=>[m.id,m.updated_at])),reply:lastContext.memories.length?'Retomamos lo que te ayudó: '+lastContext.memories.map(m=>m.content).join('; '):'Podemos preparar un **guion** de diez minutos.',life_area:'work',intervention:'PROPOSE_ACTION',situation:{action:'create',situation_id:null,title:'Reunión pendiente',summary:'Preparar una reunión'},commitment:{create:true,what:'Preparar un guion de diez minutos',why:'Facilitar la reunión'},memory:{content:''}};
      data=await scalar("select selfia_save_turn($1,$2,$3,$4,$5,$6)",[cid,body.request_id,body.content,turn,body.situation_id||null,body.goal_id||null]);
     } else throw Error('unexpected function');
    }else if(url.pathname.includes('/rpc/')){
@@ -65,6 +65,7 @@ try{
  await page.getByPlaceholder('Escribe o háblame…').fill('Quiero preparar una reunión con mi responsable');
  await page.getByRole('button',{name:'Enviar',exact:true}).click();
  await page.getByRole('button',{name:'Guardar esta acción',exact:true}).click();
+ assert.equal(await page.locator('.msg.assistant strong').count(),1);
  await page.getByRole('button',{name:'Ver compromiso y elegir fecha',exact:true}).click();
  await page.getByRole('heading',{name:'Compromisos sin fecha',exact:true}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Elegir fecha y llevar a mi semana'}).count(),1);
@@ -115,7 +116,13 @@ try{
  assert.equal((await q("select count(*)::int as n from agenda_events"))[0].n,2);
  await q("insert into goals(user_id,title,life_area,status) values($1,'Objetivo recuperable','work','paused')",[uid]);
  // Reload obtains the record through the UI's actual data path.
- await page.reload();await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Objetivos',exact:true}).click();
+ await page.reload();await page.getByRole('button',{name:'Mi semana',exact:true}).click();
+ const plan=page.locator('.agendaItem').filter({hasText:'Paseo tranquilo de prueba'});
+ await plan.getByText('Una opción sintética para probar la agenda.',{exact:false}).waitFor();
+ assert.equal(await plan.getByRole('link',{name:'Consultar fuente del plan'}).getAttribute('href'),'https://example.test/plan');
+ await plan.getByRole('button',{name:'Revisar o corregir resultado'}).click();await page.getByLabel('Revisar acción').getByRole('link',{name:'Consultar fuente del plan'}).waitFor();
+ await page.getByRole('button',{name:'Cancelar',exact:true}).click();
+ await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Objetivos',exact:true}).click();
  await page.getByRole('button',{name:'Retomar objetivo',exact:true}).click();
  await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Pausar',exact:true}).waitFor();
  assert.equal(await scalar("select status from goals where title='Objetivo recuperable'"),'active');

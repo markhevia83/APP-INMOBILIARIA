@@ -15,7 +15,7 @@ const req='20000000-0000-4000-8000-000000000001';
 test('complete synthetic cycle, correction, withdrawal, rollback and user isolation',async()=>{
  const db=new PGlite();
  await db.exec(await readFile(new URL('./baseline.sql',import.meta.url),'utf8'));
- await db.exec(await readFile(new URL('../../supabase/migrations/20261006142249_continuity_cycle.sql',import.meta.url),'utf8'));await db.exec(await readFile(new URL('../../supabase/migrations/20261008143624_astra_continuity_repairs.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../../supabase/migrations/20261006142249_continuity_cycle.sql',import.meta.url),'utf8'));await db.exec(await readFile(new URL('../../supabase/migrations/20261008143624_astra_continuity_repairs.sql',import.meta.url),'utf8'));await db.exec(await readFile(new URL('../../supabase/migrations/20261008182709_audit_followup_context.sql',import.meta.url),'utf8'));
  await db.exec("insert into auth.users values ('"+uid+"'),('"+other+"');set role authenticated;");
  await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid]);
  const row=async(sql,args=[])=> (await db.query(sql,args)).rows[0];

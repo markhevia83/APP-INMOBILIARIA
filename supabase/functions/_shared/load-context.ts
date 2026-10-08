@@ -41,6 +41,26 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
    if(r.error||!r.data)throw Error('selected_context_not_found');situations.push(r.data);
   }
  }
+ // Explicitly selected work is loaded independently of the general recent page.
+ const allSelected=async(query:any)=>{
+  const result:any[]=[];
+  for(let offset=0;offset<10000;offset+=500){
+   const r=await query.range(offset,offset+499);
+   if(r.error)throw Error('selected_context_unavailable');result.push(...r.data);
+   if(r.data.length<500)return result;
+  }
+  throw Error('selected_context_too_large');
+ };
+ const merge=(target:any[],extra:any[])=>{for(const x of extra)if(!target.some(y=>y.id===x.id))target.push(x)};
+ for(const [column,id] of [['situation_id',selectedSituation],['goal_id',selectedGoal]])if(id){
+  for(const [table,target] of [['agenda_events',agenda],['commitments',commitments]] as any[]){
+   merge(target,await allSelected(sb.from(table).select('*').eq('user_id',userId).eq(column,id).order('id')));
+  }
+ }
+ const selectedEvents=agenda.filter((a:any)=>selectedSituation&&a.situation_id===selectedSituation||selectedGoal&&a.goal_id===selectedGoal).map((a:any)=>a.id);
+ for(let i=0;i<selectedEvents.length;i+=100){
+  merge(reviews,await allSelected(sb.from('action_reviews').select('*').eq('user_id',userId).in('event_id',selectedEvents.slice(i,i+100)).order('id')));
+ }
  const ids=[...new Set([...memories,...situations,...commitments,...agenda].map(x=>x.source_message_id).filter(Boolean))];
  const sources:any[]=[];
  for(let i=0;i<ids.length;i+=100){
@@ -53,7 +73,14 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
   const r=await sb.from('turn_receipts').select('conversation_id,memory_ids').eq('user_id',userId).overlaps('memory_ids',withdrawn.slice(i,i+100));
   if(r.error)throw Error('memory_usage_unavailable');memoryUses.push(...r.data);
  }
- const context=continuityContext({memories,sources,history,situations,commitments,agenda,goals,reviews,memoryUses});
+ const revisions:any[]=[];
+ for(let i=0;i<withdrawn.length;i+=100){
+  const r=await sb.from('memory_revisions').select('memory_id,before_data').eq('user_id',userId).in('memory_id',withdrawn.slice(i,i+100));
+  if(r.error)throw Error('memory_revisions_unavailable');revisions.push(...r.data);
+ }
+ const prioritize=(rows:any[])=>rows.sort((a:any,b:any)=>Number(Boolean(b.id===selectedSituation||b.id===selectedGoal||b.situation_id===selectedSituation&&selectedSituation||b.goal_id===selectedGoal&&selectedGoal||selectedEvents.includes(b.event_id)))-Number(Boolean(a.id===selectedSituation||a.id===selectedGoal||a.situation_id===selectedSituation&&selectedSituation||a.goal_id===selectedGoal&&selectedGoal||selectedEvents.includes(a.event_id))));
+ const context=continuityContext({memories,sources,history,situations:prioritize(situations),commitments:prioritize(commitments),agenda:prioritize(agenda),goals:prioritize(goals),reviews:prioritize(reviews),memoryUses,revisions});
+ prioritize(context.reviews);
  return {...context,selectedSituation,profile:context.allowLegacy?profile:null,profileItems:context.allowLegacy?profileItems:[],
   hypotheses:context.allowLegacy?hypotheses:[],people:context.allowLegacy?people:[]};
 }
