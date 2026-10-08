@@ -61,6 +61,19 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
  for(let i=0;i<selectedEvents.length;i+=100){
   merge(reviews,await allSelected(sb.from('action_reviews').select('*').eq('user_id',userId).in('event_id',selectedEvents.slice(i,i+100)).order('id')));
  }
+ // Corrections can inherit a step from a withdrawn declaration outside the
+ // recent page. Load their ancestry before deciding whether a step is current.
+ const checkedParents=new Set();
+ for(let depth=0;depth<100;depth++){
+  const parents=[...new Set(reviews.map((r:any)=>r.supersedes_id).filter((id:any)=>id&&!checkedParents.has(id)&&!reviews.some((r:any)=>r.id===id)))];
+  if(!parents.length)break;
+  for(let i=0;i<parents.length;i+=100){
+   const batch=parents.slice(i,i+100);
+   const r=await sb.from('action_reviews').select('*').eq('user_id',userId).in('id',batch);
+   if(r.error)throw Error('review_ancestry_unavailable');batch.forEach(id=>checkedParents.add(id));merge(reviews,r.data);
+  }
+  if(depth===99)throw Error('review_ancestry_too_deep');
+ }
  const ids=[...new Set([...memories,...situations,...commitments,...agenda].map(x=>x.source_message_id).filter(Boolean))];
  const sources:any[]=[];
  for(let i=0;i<ids.length;i+=100){

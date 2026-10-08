@@ -79,6 +79,7 @@ try{
  await page.getByLabel('Qué quiero que SELF-IA recuerde').fill('Dividir el guion en pasos me ayudó');
  await page.getByLabel('Qué probaría la próxima vez').fill('Empezar por la primera frase');
  await page.getByRole('button',{name:'Guardar revisión',exact:true}).click();
+ await page.getByLabel('Revisar acción').waitFor({state:'hidden'});
  await page.getByRole('button',{name:'Revisar o corregir resultado'}).click();
  assert.equal(await page.getByLabel('¿Qué ocurrió?').inputValue(),'partially_done');
  assert.equal(await page.getByLabel('Resultado o contexto').inputValue(),'Preparé solo el inicio');
@@ -88,6 +89,7 @@ try{
  await page.getByLabel('Tipo de revisión').selectOption('correct');
  await page.getByLabel('Resultado o contexto').fill('Corrección: preparé solo la primera frase');
  await page.getByRole('button',{name:'Guardar revisión',exact:true}).click();
+ await page.getByLabel('Revisar acción').waitFor({state:'hidden'});
  await page.getByLabel('Tipo de revisión').waitFor({state:'hidden'});
  assert.equal(await scalar('select count(*)::int from action_reviews'),2);
  assert.equal(await scalar("select count(*)::int from memories where status='obsolete'"),1);
@@ -107,6 +109,18 @@ try{
  assert.ok(!JSON.stringify(lastContext).includes('Dividir el guion'));
  await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Así me veo',exact:true}).click();card=page.locator('.memoryCard').filter({hasText:'Escribir la primera frase me ayudó'});
  await card.getByRole('button',{name:'No volver a usar',exact:true}).click();
+ await card.waitFor({state:'hidden'});
+ await page.getByRole('button',{name:'Hoy',exact:true}).click();
+ await page.getByRole('button',{name:'Mi semana',exact:true}).click();
+ await page.getByRole('button',{name:'Revisar o corregir resultado',exact:true}).click();
+ assert.equal(await page.getByLabel('Qué probaría la próxima vez').inputValue(),'');
+ await page.getByRole('button',{name:'Cancelar',exact:true}).click();
+ await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Asuntos abiertos',exact:true}).click();
+ await page.getByRole('button',{name:'Ver resumen anterior',exact:true}).first().click();
+ await page.getByLabel('Historial del resumen').waitFor({state:'visible'});
+ await page.getByText('Versiones anteriores: no se usan como recomendaciones vigentes.',{exact:true}).waitFor();
+ assert.ok(await page.getByLabel('Historial del resumen').locator('article').count());
+ await page.getByRole('button',{name:'Cerrar historial del resumen',exact:true}).click();
  await page.getByRole('button',{name:'Hablar',exact:true}).click();await page.getByPlaceholder('Escribe o háblame…').fill('¿Qué probamos ahora?');await page.getByRole('button',{name:'Enviar',exact:true}).click();await page.locator('.msg.assistant').filter({hasText:'Podemos preparar un guion de diez minutos.'}).waitFor();
  assert.equal(lastContext.memories.length,0);assert.ok(!JSON.stringify(lastContext).includes('Escribir la primera frase'));
  await page.getByRole('button',{name:'Hoy',exact:true}).click();await page.getByRole('button',{name:'Qué hago hoy',exact:true}).click();await page.getByRole('button',{name:'Buscar planes',exact:true}).click();

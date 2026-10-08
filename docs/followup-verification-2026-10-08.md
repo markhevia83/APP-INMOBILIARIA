@@ -13,7 +13,7 @@ Rama de desarrollo: `selfia-audit-p0-onboarding`. Preview aislada: `selfia-conti
 
 Verificaciones completadas antes de publicar preview:
 
-- Nueve pruebas de lógica, PostgreSQL/RLS, contexto seleccionado, fuentes y presentación.
+- Once pruebas de lógica, PostgreSQL/RLS, contexto seleccionado, fuentes, presentación y ventanas de disponibilidad.
 - Recorrido móvil 390 × 844 completo con modelo simulado y SQL/RLS real; sin solicitudes externas.
 - Construcción Vite satisfactoria.
 - Pruebas desplegadas de Auth: seis funciones rechazan acceso no autenticado; aislamiento entre dos cuentas, repetición de solicitudes, historial y conflictos de versiones.
@@ -21,3 +21,14 @@ Verificaciones completadas antes de publicar preview:
 - Advisor de seguridad: sólo aviso preexistente de protección contra contraseñas filtradas desactivada.
 
 Pendiente al registrar este documento: verificación independiente de Astra sobre la nueva preview fija. No equivale a auditoría exhaustiva de voz, accesibilidad, concurrencia multidispositivo, caídas de servicios ni calidad con usuarios reales. La clave restringida del entorno de pruebas caduca el 13 de octubre; renovar si se siguen haciendo pruebas después de esa fecha. Mantener producción sin publicar hasta cerrar la verificación.
+
+## Ampliación tras auditoría de d183ec5
+
+Astra confirmó la recuperación factual de Faro y Huerto, persistencia de planes, horas futuras, formato legible y ausencia de duplicados nuevos. Detectó tres pendientes adicionales:
+
+- P1: una corrección factual heredaba el siguiente paso de una revisión cuyo aprendizaje estaba retirado. Se reproduce con «pinza violeta» reformulada como «broche morado». Reparación: excluir pasos heredados siguiendo la cadena de correcciones, cargar ancestros fuera de la página reciente y no prellenar estos pasos en el formulario. Nueva declaración explícita independiente sigue siendo posible; el historial original se conserva. Verificado con modelo real incluso forzando el valor heredado por RPC.
+- P2: historial de resumen invisible. El panel estaba dentro de otra sección. Ahora se muestra en Asuntos abiertos, desplaza la vista hasta él y explica si no hay versiones. Verificado con recorrido móvil.
+- P2: plan propuesto después del cierre. La búsqueda sólo tenía fecha. Ahora usa hora real del servidor y zona del usuario, pide horarios verificables y filtra ventanas cerradas, eventos empezados o tiempo insuficiente para preparación/visita. Las actividades flexibles deben declarar que no dependen de horarios. No se devuelve texto bruto de propuestas descartadas. El formulario comprueba la ventana verificada al guardar. La fiabilidad de horarios sigue dependiendo de las fuentes encontradas; no se garantiza disponibilidad futura.
+- P3: «no declarado» confundía una retirada con ausencia histórica. El contexto indica la exclusión y las instrucciones distinguen un paso vigente de uno retirado sin reconstruir su contenido.
+
+Las pruebas de retirada cubren también correcciones heredadas y reformulaciones diferentes; se conservan el resultado factual y la fecha. No se altera ni borra ningún plan antiguo guardado: las comprobaciones nuevas se aplican a propuestas nuevas.

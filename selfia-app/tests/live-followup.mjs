@@ -33,4 +33,16 @@ try{
  assert.equal((await row(sb.from('agenda_events').select().eq('id',plan.id))).source_url,'https://www.madrid.es/');
  const summaries=await sb.from('situation_summary_revisions').select().eq('situation_id',saved.situation.id);assert.ifError(summaries.error);assert.ok(summaries.data.length);
  console.log('PASS CLOUD: HTTPS plan source and description persisted; dependent summary history retained.');
+ const second=await row(sb.from('agenda_events').insert({user_id:owner,title:'Preparar sustrato',situation_id:saved.situation.id,goal_id:goal.id,scheduled_start:'2026-10-12T14:30:00Z',status:'planned'}).select());
+ const secondReview=await rpc('selfia_review_action',{p_event:second.id,p_status:'partially_done',p_result:'Preparé dos recipientes, falta añadir tierra',p_learning:'Me ayudó un cuaderno rojo junto a la ventana',p_next:'Volver a sentarme junto a la ventana con ese cuaderno y reutilizarlo',p_rescheduled:null,p_request:randomUUID(),p_expected:second.updated_at});
+ const learned=await row(sb.from('memories').select().eq('id',secondReview.memory_id));
+ await rpc('selfia_revise_memory',{p_id:learned.id,p_action:'dontuse',p_content:'',p_expected:learned.updated_at});
+ const later=await edge('chat',{request_id:randomUUID(),goal_id:goal.id,timezone:'Europe/Madrid',content:'En este objetivo, ¿qué ocurrió en la acción Preparar sustrato y qué siguiente paso específico quedó registrado para esa acción? Usa sólo datos vigentes, sin inferir aprendizajes.'});
+ assert.match(later.reply,/recipientes|tierra/i);assert.ok(!/cuaderno|ventana/i.test(later.reply));
+ console.log('PASS LIVE: withdrawal excludes a reworded next-step recommendation while preserving the independent factual result.');
+ const secondCurrent=await row(sb.from('agenda_events').select().eq('id',second.id));
+ await rpc('selfia_correct_review',{p_review:secondReview.review.id,p_event:second.id,p_status:'partially_done',p_result:'Corrección factual: preparé tres recipientes, todavía falta tierra',p_learning:'',p_next:'Volver a sentarme junto a la ventana con ese cuaderno y reutilizarlo',p_rescheduled:null,p_request:randomUUID(),p_expected:secondCurrent.updated_at});
+ const afterCorrection=await edge('chat',{request_id:randomUUID(),goal_id:goal.id,timezone:'Europe/Madrid',content:'Retoma Preparar sustrato. Dime el contexto factual corregido y si tiene un siguiente paso vigente disponible. No reconstruyas información retirada.'});
+ assert.match(afterCorrection.reply,/tres|3/);assert.ok(!/cuaderno|ventana/i.test(afterCorrection.reply));
+ console.log('PASS LIVE: a factual correction that inherits the old recommendation still cannot reactivate it.');
 }finally{await sb.auth.signOut({scope:'local'})}

@@ -1,6 +1,19 @@
 export function eligibleMemories(rows: any[]) {
  return rows.filter(m=>['confirmed','update'].includes(m.status)&&['confirmed','corrected'].includes(m.user_validation));
 }
+export function hasWithdrawnStep(review:any,reviews:any[],memories:any[]) {
+ const seen=new Set();let current=review;
+ while(current&&!seen.has(current.id)){
+  seen.add(current.id);
+  const declarations=memories.filter((m:any)=>m.structured_data?.review_id===current.id);
+  if(declarations.some((m:any)=>['obsolete','do_not_store'].includes(m.status)||['rejected','corrected'].includes(m.user_validation)))return true;
+  if(declarations.some((m:any)=>['confirmed','update'].includes(m.status)&&m.user_validation==='confirmed'))return false;
+  const prior=reviews.find((r:any)=>r.id===current.supersedes_id);
+  if(!prior||prior.next_step!==current.next_step)return false;
+  current=prior;
+ }
+ return false;
+}
 export function continuityContext(data: any) {
  const blocked=data.memories.filter((m:any)=>['obsolete','do_not_store'].includes(m.status)||['rejected','corrected'].includes(m.user_validation));
  const blockedMessages=new Set(blocked.map((m:any)=>m.source_message_id).filter(Boolean));
@@ -22,7 +35,7 @@ export function continuityContext(data: any) {
   goals:data.goals.map((g:any)=>({id:g.id,title:declared(g.title),status:g.status,progress_state:g.progress_state,situation_id:g.situation_id,life_area:g.life_area})),
   commitments:data.commitments.map((c:any)=>({id:c.id,what:declared(c.what),why:tainted(c)?null:declared(c.why),status:c.status,situation_id:c.situation_id,goal_id:c.goal_id})),
   agenda:data.agenda.map((a:any)=>({id:a.id,title:declared(a.title),status:a.status,scheduled_start:a.scheduled_start,situation_id:a.situation_id,goal_id:a.goal_id,commitment_id:a.commitment_id,life_area:a.life_area,notes:tainted(a)?null:declared(a.notes),source_url:a.source_url})),
-  reviews:latest.map((r:any)=>({event_id:r.event_id,status:r.status,result_note:declared(r.result_note),next_step:declared(r.next_step),rescheduled_start:r.rescheduled_start,created_at:r.created_at})),
+  reviews:latest.map((r:any)=>({event_id:r.event_id,status:r.status,result_note:declared(r.result_note),next_step:hasWithdrawnStep(r,data.reviews,data.memories)?null:declared(r.next_step),next_step_excluded:hasWithdrawnStep(r,data.reviews,data.memories),rescheduled_start:r.rescheduled_start,created_at:r.created_at})),
   allowLegacy:blocked.length===0
  };
 }
