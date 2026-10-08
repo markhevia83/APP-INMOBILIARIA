@@ -1,19 +1,27 @@
-import React,{useState} from 'react';
+import React,{useRef,useState} from 'react';
 import {safeLink,localDate} from './continuity';
-export function ReviewPanel({event,onSave,onCancel}){
- const [status,setStatus]=useState('done'),[result,setResult]=useState(''),[learning,setLearning]=useState(''),[next,setNext]=useState(''),[date,setDate]=useState(''),[saving,setSaving]=useState(false),[error,setError]=useState('');
- const [request]=useState(()=>crypto.randomUUID());
- async function save(){setSaving(true);setError('');try{
+export const RESULT_LABELS={done:'Lo hice',partially_done:'Lo hice parcialmente',not_done:'No lo hice',moved:'Lo moví',no_longer_relevant:'Ya no tiene sentido',skipped_review:'Prefiero no revisarlo'};
+export const MEMORY_LABELS={correct:'Corrección',confirm:'Confirmado por ti',dontuse:'No volver a usar',obsolete:'Ya no aplica',confirmed:'Confirmado por ti',update:'Actualizado',candidate:'Pendiente de confirmar',do_not_store:'No volver a usar'};
+export const GOAL_LABELS={active:'Activo',paused:'En pausa',completed:'Completado',abandoned:'Ya no encaja',starting:'Empezando',progressing:'Avanzando',stable:'Estable',needs_attention:'Necesita atención',blocked:'Bloqueado',changing:'En cambio',pending_decision:'Pendiente de decisión',improving:'Mejorando'};
+const localInput=date=>{const d=new Date(date);return localDate(d)+'T'+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+export function ReviewPanel({event,previous,initialLearning='',history=[],onSave,onCancel}){
+ const [mode,setMode]=useState(previous?'correct':'new');
+ const [status,setStatus]=useState(previous?.status||'done'),[result,setResult]=useState(previous?.result_note||''),[learning,setLearning]=useState(initialLearning),[next,setNext]=useState(previous?.next_step||''),[date,setDate]=useState(previous?.rescheduled_start?localInput(previous.rescheduled_start):''),[saving,setSaving]=useState(false),[error,setError]=useState('');
+ const pending=useRef(null),inFlight=useRef(false);
+ function changeMode(value){setMode(value);setStatus(value==='correct'?previous.status:'done');setResult(value==='correct'?previous.result_note||'':'');setLearning(value==='correct'?initialLearning:'');setNext(value==='correct'?previous.next_step||'':'');setDate(value==='correct'&&previous.rescheduled_start?localInput(previous.rescheduled_start):'');setError('')}
+ async function save(){if(inFlight.current)return;inFlight.current=true;setSaving(true);setError('');try{
   if(status==='moved'&&(!date||new Date(date)<=new Date()))throw Error('Elige una fecha futura.');
-  await onSave(event,{status,result:status==='skipped_review'?'':result,learning:status==='skipped_review'?'':learning,next:status==='skipped_review'?'':next,rescheduled:status==='moved'?new Date(date).toISOString():null,request});onCancel();
- }catch(e){setError(e.message)}finally{setSaving(false)}}
- return <section className="formCard card" aria-label="Revisar acción"><h3>{event.title}</h3><label>¿Qué ocurrió?<select value={status} onChange={e=>setStatus(e.target.value)}>
- {Object.entries({done:'Lo hice',partially_done:'Lo hice parcialmente',not_done:'No lo hice',moved:'Lo moví',no_longer_relevant:'Ya no tiene sentido',skipped_review:'Prefiero no revisarlo'}).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label>
- {status!=='skipped_review'&&<><label>Resultado o contexto<textarea value={result} onChange={e=>setResult(e.target.value)} placeholder="Qué pasó, qué ayudó o qué lo dificultó (opcional)" maxLength={4000}/></label>
- <label>Qué quiero que SELF-IA recuerde<textarea value={learning} onChange={e=>setLearning(e.target.value)} placeholder="Un aprendizaje concreto de este intento (opcional)" maxLength={4000}/></label><small>Lo guardaré como algo que tú has declarado, referido a este intento. Podrás corregirlo.</small>
- <label>Qué probaría la próxima vez<textarea value={next} onChange={e=>setNext(e.target.value)} maxLength={4000}/></label></>}
- {status==='moved'&&<label>Nueva fecha<input type="datetime-local" value={date} onChange={e=>setDate(e.target.value)}/></label>}
- {error&&<p role="alert">{error}</p>}<button disabled={saving} onClick={save}>{saving?'Guardando…':'Guardar revisión'}</button><button className="soft" disabled={saving} onClick={onCancel}>Cancelar</button></section>
+  const payload={status,result:status==='skipped_review'?'':result,learning:status==='skipped_review'?'':learning,next:status==='skipped_review'?'':next,rescheduled:status==='moved'?new Date(date).toISOString():null,review_id:mode==='correct'?previous.id:null};
+  const signature=JSON.stringify(payload);if(pending.current?.signature!==signature)pending.current={signature,request:crypto.randomUUID()};
+  await onSave(event,{...payload,request:pending.current.request});onCancel();
+ }catch(e){setError(e.message)}finally{inFlight.current=false;setSaving(false)}}
+ return <section className="formCard card" aria-label="Revisar acción"><h3>{event.title}</h3>{previous&&<><label>Tipo de revisión<select value={mode} disabled={saving} onChange={e=>changeMode(e.target.value)}><option value="correct">Corregir el último resultado</option><option value="new">Registrar un nuevo intento</option></select></label><p>{mode==='correct'?'Se conserva la versión anterior. El aprendizaje de esa revisión será sustituido por lo que guardes ahora.':'Este intento se añade al historial; no corrige el anterior.'}</p></>}<label>¿Qué ocurrió?<select disabled={saving} value={status} onChange={e=>setStatus(e.target.value)}>
+ {Object.entries(RESULT_LABELS).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label>
+ {status!=='skipped_review'&&<><label>Resultado o contexto<textarea disabled={saving} value={result} onChange={e=>setResult(e.target.value)} placeholder="Qué pasó, qué ayudó o qué lo dificultó (opcional)" maxLength={4000}/></label>
+ <label>Qué quiero que SELF-IA recuerde<textarea disabled={saving} value={learning} onChange={e=>setLearning(e.target.value)} placeholder="Un aprendizaje concreto de este intento (opcional)" maxLength={4000}/></label><small>Lo guardaré como algo que tú has declarado, referido a este intento. Podrás corregirlo.</small>
+ <label>Qué probaría la próxima vez<textarea disabled={saving} value={next} onChange={e=>setNext(e.target.value)} maxLength={4000}/></label></>}
+ {status==='moved'&&<label>Nueva fecha<input disabled={saving} type="datetime-local" value={date} onChange={e=>setDate(e.target.value)}/></label>}
+ {error&&<p role="alert">{error}</p>}<button disabled={saving} onClick={save}>{saving?'Guardando…':'Guardar revisión'}</button><button className="soft" disabled={saving} onClick={onCancel}>Cancelar</button>{history.length>0&&<details><summary>Historial de resultados ({history.length})</summary>{history.map(r=><article key={r.id}><small>{new Date(r.created_at).toLocaleString('es-ES')} · {r.supersedes_id?'Corrección':'Intento registrado'}</small><p>{RESULT_LABELS[r.status]}</p>{r.result_note&&<p>Resultado: {r.result_note}</p>}{r.learning&&<p>Declaración de este intento: {r.learning}</p>}{r.next_step&&<p>Siguiente paso: {r.next_step}</p>}</article>)}</details>}</section>
 }
 export function MemoryCard({memory,onAction,onTrace}){
  const [editing,setEditing]=useState(false),[text,setText]=useState(memory.content),[busy,setBusy]=useState(false),[error,setError]=useState('');

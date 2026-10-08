@@ -94,3 +94,20 @@ Retrying with `node --dns-result-order=ipv4first` restored the connection: cloud
 
 Memory withdrawal excludes attributable context and conservatively excludes untraceable legacy personalization; it does not delete historical records. Some older relationships have no provenance until the user explicitly reconnects them. Local integration, cloud persistence, deployed access guards, published browser persistence and a synthetic live model/discovery cycle are verified. The test key expires on 2026-10-13. This branch is a reviewable implementation, not approval to publish to production.
 
+# Astra interactive repairs — 2026-10-08
+
+The independent mobile walkthrough completed the full cycle with the real model. It exposed four issues: duplicate subjects when continuing a goal, accepted unscheduled actions hidden from Compromisos, learning provenance showing the initial conversation instead of the review declaration, and result correction starting with an empty form.
+
+Repairs preserve an explicitly selected goal's subject in both context loading and the owner-scoped transaction. Legacy goals recover a subject only from one unique existing action link; similar titles are never merged. Goal creation offers an explicit subject selector, and chat provides a separate new-subject entry point. No existing subjects or real data are deleted.
+
+Accepted unscheduled actions appear in Compromisos/Mi semana with a direct route from the chat confirmation. Result review opens the prior values and distinguishes correction from another attempt. Corrections append a linked review, preserve the previous version, and retire its active learning transactionally; already withdrawn memories stay withdrawn. Source/history shows the original review declaration, result/context and next step, using Spanish labels. Goal status and progress changes now have owner-scoped append-only history; earlier changes are not retrospectively invented. The greeting no longer exposes a long email identifier. Mobile chat spacing prevents the sticky composer covering action controls.
+
+Validation completed before publishing the frontend:
+
+- Four Node/PGlite tests pass, including three repeated goal continuations, a separate subject, legacy-link recovery, result correction/replay, stale correction, memory supersession, goal audit and two-user/anonymous denial.
+- The 390 × 844 browser cycle passes, including direct discovery of unscheduled actions, prefilled correction, new-attempt reset, origin text, goal-history display and repeated goal continuation. Model output is simulated in this local browser test; SQL and RLS execute in PGlite.
+- Real isolated Supabase cloud tests pass for all six authentication guards, owner isolation, correction/replay, withdrawn-memory preservation, goal audit and continuity.
+- The real model cycle passes for corrected-memory use, withdrawal exclusion, structured plans with HTTPS sources and cross-owner selected-link denial.
+- Vite build passes. Supabase security advisors report only the pre-existing leaked-password protection warning.
+
+Migration `20261008143624_astra_continuity_repairs.sql` and updated functions were applied only to `tleqdegnzeukonbbrrzk`. Production `hhbipvgusfhpcbdifxyy` and main remain untouched. Independent rechecking of the published repaired preview remains a separate validation step.

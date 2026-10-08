@@ -50,8 +50,8 @@ assert.ok(context.body.confirmed_memories.some(m=>m.id===memory.id&&m.content===
 assert.ok(!JSON.stringify(context.body).includes(memory.content),'old wording excluded');
 const stale=await a.sb.rpc('selfia_revise_memory',{p_id:memory.id,p_action:'correct',p_content:'Synthetic: stale',p_expected:memory.updated_at});
 assert.match(stale.error?.message||'',/memory_changed_reload/);
-for(const table of ['memories','action_reviews','commitments','agenda_events','messages','turn_receipts']){
- const r=await b.sb.from(table).select(table==='turn_receipts'?'request_id':'id');assert.ifError(r.error);assert.equal(r.data.length,0,table+' cross-user read denied');
+for(const table of ['memories','action_reviews','commitments','agenda_events','messages','turn_receipts','goal_revisions']){
+ const r=await b.sb.from(table).select(table==='turn_receipts'?'request_id':'id').eq('user_id',a.id);assert.ifError(r.error);assert.equal(r.data.length,0,table+' cross-user read denied');
 }
 const cross=await b.sb.rpc('selfia_revise_memory',{p_id:memory.id,p_action:'confirm',p_content:'',p_expected:corrected.updated_at});
 assert.match(cross.error?.message||'',/memory_not_found/);
@@ -62,6 +62,21 @@ assert.ok(!JSON.stringify(context.body).includes(corrected.content));
 const revisions=await a.sb.from('memory_revisions').select('id').eq('memory_id',memory.id);
 assert.ifError(revisions.error);assert.equal(revisions.data.length,2);
 console.log('PASS: cloud transaction retries, situation/action/goal links, outcome/learning, correction/audit, withdrawal, stale edit and two-user RLS');
+for(let i=0;i<3;i++){
+ const c=await single(a.sb.from('conversations').insert({user_id:a.id,title:'Synthetic continuity '+run}).select());
+ const again=await rpc(a.sb,'selfia_save_turn',{...args,p_conversation:c.id,p_request:randomUUID(),p_turn:{...turn,memory:{content:''},situation:{...turn.situation,title:'Another title for the same subject'}}});
+ assert.equal(again.situation.id,saved.situation.id);
+}
+const latestEvent=await single(a.sb.from('agenda_events').select().eq('id',event.id));
+const correctionArgs={...reviewArgs,p_review:review.review.id,p_result:'Synthetic: corrected result',p_learning:`Synthetic ${run}: corrected review learning`,p_request:randomUUID(),p_expected:latestEvent.updated_at};
+const resultCorrection=await rpc(a.sb,'selfia_correct_review',correctionArgs);
+assert.equal(resultCorrection.review.supersedes_id,review.review.id);assert.equal((await rpc(a.sb,'selfia_correct_review',correctionArgs)).replayed,true);
+const priorMemory=await single(a.sb.from('memories').select().eq('id',memory.id));assert.equal(priorMemory.status,'do_not_store','a correction must not reactivate a withdrawn memory');
+context=await edge('context',a.token);assert.equal(context.status,200);assert.ok(context.body.confirmed_memories.some(m=>m.id===resultCorrection.memory_id));assert.ok(!JSON.stringify(context.body).includes(corrected.content));
+const foreignCorrection=await b.sb.rpc('selfia_correct_review',correctionArgs);assert.match(foreignCorrection.error?.message||'',/event_not_found/);
+await single(a.sb.from('goals').update({status:'paused'}).eq('id',goal.id).select());await single(a.sb.from('goals').update({status:'active'}).eq('id',goal.id).select());
+const history=await a.sb.from('goal_revisions').select().eq('goal_id',goal.id);assert.ifError(history.error);assert.equal(history.data.length,3);
+console.log('PASS: deployed goal continuity, result correction/replay, withdrawal preservation, goal audit and correction isolation');
 const live=await edge('chat',a.token,{request_id:randomUUID(),content:'Synthetic: ¿qué paso pequeño puedo preparar para mi reunión?'});
 if(live.status===503&&live.body.error==='ai_not_configured'){
  console.log('PENDING: live AI cycle requires OPENAI_API_KEY configured server-side in SELF-IA Pruebas');

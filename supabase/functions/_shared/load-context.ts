@@ -28,6 +28,19 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
    if(r.error||!r.data)throw Error('selected_context_not_found');collection.push(r.data);
   }
  }
+ if(!selectedSituation&&selectedGoal){
+  selectedSituation=goals.find((g:any)=>g.id===selectedGoal)?.situation_id||null;
+  if(!selectedSituation){
+   const links=await Promise.all(['commitments','agenda_events'].map(table=>sb.from(table).select('situation_id').eq('user_id',userId).eq('goal_id',selectedGoal)));
+   if(links.some(r=>r.error))throw Error('goal_links_unavailable');
+   const ids=[...new Set(links.flatMap(r=>r.data.map((x:any)=>x.situation_id)).filter(Boolean))];
+   if(ids.length===1)selectedSituation=ids[0] as string;
+  }
+  if(selectedSituation&&!situations.some((s:any)=>s.id===selectedSituation)){
+   const r=await sb.from('situations').select('*').eq('user_id',userId).eq('id',selectedSituation).maybeSingle();
+   if(r.error||!r.data)throw Error('selected_context_not_found');situations.push(r.data);
+  }
+ }
  const ids=[...new Set([...memories,...situations,...commitments,...agenda].map(x=>x.source_message_id).filter(Boolean))];
  const sources:any[]=[];
  for(let i=0;i<ids.length;i+=100){
@@ -41,7 +54,7 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
   if(r.error)throw Error('memory_usage_unavailable');memoryUses.push(...r.data);
  }
  const context=continuityContext({memories,sources,history,situations,commitments,agenda,goals,reviews,memoryUses});
- return {...context,profile:context.allowLegacy?profile:null,profileItems:context.allowLegacy?profileItems:[],
+ return {...context,selectedSituation,profile:context.allowLegacy?profile:null,profileItems:context.allowLegacy?profileItems:[],
   hypotheses:context.allowLegacy?hypotheses:[],people:context.allowLegacy?people:[]};
 }
 

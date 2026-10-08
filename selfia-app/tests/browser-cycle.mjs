@@ -12,13 +12,13 @@ const code=bundle.outputFiles[0].text,css=await readFile('src/styles.css','utf8'
 const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/app.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html');res.end(req.url==='/app.js'?code:req.url==='/style.css'?css:'<html lang="es"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/app.js"></script></html>')});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const base='http://127.0.0.1:'+server.address().port;
-const db=new PGlite();await db.exec(await readFile('tests/baseline.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261006142249_continuity_cycle.sql','utf8'));
+const db=new PGlite();await db.exec(await readFile('tests/baseline.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261006142249_continuity_cycle.sql','utf8'));await db.exec(await readFile('../supabase/migrations/20261008143624_astra_continuity_repairs.sql','utf8'));
 await db.exec("insert into auth.users values ('"+uid+"');set role authenticated;");await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid]);
 await db.query("insert into profiles(user_id,onboarding_status) values($1,'skipped')",[uid]);
 const q=async(sql,args=[])=> (await db.query(sql,args)).rows;
 const scalar=async(sql,args=[])=>Object.values((await q(sql,args))[0])[0];
 const collect=async()=>{const data={};for(const [field,table] of Object.entries({memories:'memories',history:'messages',sources:'messages',situations:'situations',commitments:'commitments',agenda:'agenda_events',goals:'goals',reviews:'action_reviews',memoryUses:'turn_receipts'}))data[field]=await q('select * from '+table);return continuityContext(data)};
-const rpcNames=new Set(['selfia_accept_action','selfia_schedule_commitment','selfia_review_action','selfia_revise_memory']);
+const rpcNames=new Set(['selfia_accept_action','selfia_schedule_commitment','selfia_review_action','selfia_revise_memory','selfia_correct_review']);
 let lastContext,realRequests=0;
 let page;
 const browser=await chromium.launch({channel:process.env.PLAYWRIGHT_CHANNEL||'msedge',headless:true});
@@ -65,6 +65,9 @@ try{
  await page.getByPlaceholder('Escribe o háblame…').fill('Quiero preparar una reunión con mi responsable');
  await page.getByRole('button',{name:'Enviar',exact:true}).click();
  await page.getByRole('button',{name:'Guardar esta acción',exact:true}).click();
+ await page.getByRole('button',{name:'Ver compromiso y elegir fecha',exact:true}).click();
+ await page.getByRole('heading',{name:'Compromisos sin fecha',exact:true}).waitFor();
+ assert.equal(await page.getByRole('button',{name:'Elegir fecha y llevar a mi semana'}).count(),1);
  await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Asuntos abiertos',exact:true}).click();
  await page.getByRole('button',{name:'Elegir fecha y llevar a mi semana'}).click();
  const tomorrow=new Date(Date.now()+86400000).toISOString().slice(0,10);await page.locator('input[type=date]').fill(tomorrow);
@@ -75,6 +78,18 @@ try{
  await page.getByLabel('Qué quiero que SELF-IA recuerde').fill('Dividir el guion en pasos me ayudó');
  await page.getByLabel('Qué probaría la próxima vez').fill('Empezar por la primera frase');
  await page.getByRole('button',{name:'Guardar revisión',exact:true}).click();
+ await page.getByRole('button',{name:'Revisar o corregir resultado'}).click();
+ assert.equal(await page.getByLabel('¿Qué ocurrió?').inputValue(),'partially_done');
+ assert.equal(await page.getByLabel('Resultado o contexto').inputValue(),'Preparé solo el inicio');
+ assert.equal(await page.getByLabel('Qué quiero que SELF-IA recuerde').inputValue(),'Dividir el guion en pasos me ayudó');
+ await page.getByLabel('Tipo de revisión').selectOption('new');
+ assert.equal(await page.getByLabel('Resultado o contexto').inputValue(),'');
+ await page.getByLabel('Tipo de revisión').selectOption('correct');
+ await page.getByLabel('Resultado o contexto').fill('Corrección: preparé solo la primera frase');
+ await page.getByRole('button',{name:'Guardar revisión',exact:true}).click();
+ await page.getByLabel('Tipo de revisión').waitFor({state:'hidden'});
+ assert.equal(await scalar('select count(*)::int from action_reviews'),2);
+ assert.equal(await scalar("select count(*)::int from memories where status='obsolete'"),1);
  await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Así me veo',exact:true}).click();
  let card=page.locator('.memoryCard').filter({hasText:'Dividir el guion en pasos me ayudó'});
  await card.getByRole('button',{name:'Corregir',exact:true}).click();await card.getByLabel('Corrección').fill('Escribir la primera frase me ayudó');
@@ -82,6 +97,8 @@ try{
  card=page.locator('.memoryCard').filter({hasText:'Escribir la primera frase me ayudó'});
  await card.getByRole('button',{name:'Ver origen e historial',exact:true}).click();
  await page.getByText('Antes: Dividir el guion en pasos me ayudó',{exact:true}).waitFor();
+ await page.getByText('Declaración de origen: Dividir el guion en pasos me ayudó',{exact:true}).waitFor();
+ await page.getByText('Contexto del resultado: Corrección: preparé solo la primera frase',{exact:true}).waitFor();
  await page.getByRole('button',{name:'Cerrar historial'}).click();
  await page.screenshot({path:'test-results/memory-mobile.png',fullPage:true});
  await page.getByRole('button',{name:'Hablar',exact:true}).click();await page.getByPlaceholder('Escribe o háblame…').fill('¿Cómo sigo con la reunión?');await page.getByRole('button',{name:'Enviar',exact:true}).click();
@@ -102,6 +119,20 @@ try{
  await page.getByRole('button',{name:'Retomar objetivo',exact:true}).click();
  await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Pausar',exact:true}).waitFor();
  assert.equal(await scalar("select status from goals where title='Objetivo recuperable'"),'active');
+ const recoverable=page.locator('.goalCard').filter({hasText:'Objetivo recuperable'});
+ await recoverable.getByRole('button',{name:'Ver historial del objetivo',exact:true}).click();
+ await page.getByText('En pausa → Activo',{exact:true}).waitFor();
+ await page.getByRole('button',{name:'Cerrar historial del objetivo',exact:true}).click();
+ await recoverable.getByRole('button',{name:'Hablar con SELF-IA',exact:true}).click();
+ await page.getByRole('button',{name:'Enviar',exact:true}).click();
+ await page.getByRole('button',{name:'Guardar esta acción',exact:true}).waitFor();
+ const linked=await scalar("select situation_id from goals where title='Objetivo recuperable'");assert.ok(linked);
+ const subjects=await scalar('select count(*)::int from situations');
+ await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Objetivos',exact:true}).click();
+ await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Hablar con SELF-IA',exact:true}).click();
+ await page.getByRole('button',{name:'Enviar',exact:true}).click();await page.getByRole('button',{name:'Guardar esta acción',exact:true}).waitFor();
+ assert.equal(await scalar('select count(*)::int from situations'),subjects,'same goal must not create another subject');
+ await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Objetivos',exact:true}).click();
  await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Ya no encaja',exact:true}).click();
  await page.getByText('Objetivos cerrados (1)',{exact:true}).click();await page.getByRole('button',{name:'Reabrir objetivo',exact:true}).click();
  await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Pausar',exact:true}).waitFor();
@@ -112,7 +143,6 @@ try{
  assert.deepEqual(errors,[]);assert.equal(realRequests,0);
  console.log('PASS browser cycle: action acceptance → schedule → partial outcome → learning → correction → next conversation → withdrawal → structured plan. No external requests; AI simulated, PostgreSQL/RLS real.');
 }catch(e){if(page){console.log('UI state:',await page.locator('body').innerText());await page.screenshot({path:'test-results/error.png',fullPage:true})}throw e}finally{await browser.close();server.close();await db.close()}
-
 
 
 

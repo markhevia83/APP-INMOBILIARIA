@@ -36,9 +36,11 @@ Deno.serve(async(req)=>{
  const {data:conv}=await sb.from("conversations").select("id").eq("id",conversationId).eq("user_id",user.id).maybeSingle();
  if(!conv) return json({error:"conversation_not_found"},404);
 
- const selectedSituation=body.situation_id||null,selectedGoal=body.goal_id||null;
+ let selectedSituation=body.situation_id||null;
+ const selectedGoal=body.goal_id||null;
  let context:any;
  try{context=await loadContext(sb,user.id,conversationId,selectedSituation,selectedGoal)}catch{return json({error:"context_unavailable"},503)}
+ selectedSituation=context.selectedSituation||selectedSituation;
  const {profile,profileItems,hypotheses,people}=context;
  // loadContext validates explicitly selected links with owner-scoped queries before
  // filtering withdrawn/corrected source text. A filtered prompt is not a missing link.

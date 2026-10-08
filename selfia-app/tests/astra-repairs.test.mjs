@@ -1,0 +1,51 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {PGlite} from '@electric-sql/pglite';
+import {continuityContext} from '../../supabase/functions/_shared/continuity.ts';
+const uid='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002';
+test('goal continuity, review correction history, replay, withdrawn learning and owner isolation',async()=>{
+ const db=new PGlite();
+ try{
+  for(const path of ['./baseline.sql','../../supabase/migrations/20261006142249_continuity_cycle.sql','../../supabase/migrations/20261008143624_astra_continuity_repairs.sql'])await db.exec(await readFile(new URL(path,import.meta.url),'utf8'));
+  await db.exec(`insert into auth.users values ('${uid}'),('${other}');set role authenticated;`);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid]);
+  const row=async(sql,args=[])=> (await db.query(sql,args)).rows[0];
+  const val=async(sql,args=[])=>Object.values(await row(sql,args))[0];
+  const goal=await val("insert into goals(user_id,title,life_area) values($1,'Faro','work') returning id",[uid]);
+  const turn={reply:'Una propuesta',life_area:'work',situation:{action:'create',situation_id:null,title:'Faro original',summary:'Reunión con Marta'},commitment:{create:true,what:'Ensayar',why:'Preparar la reunión'},memory:{content:''}};
+  const talk=async(g,selected=null)=>{const cid=await val("insert into conversations(user_id,title) values($1,'Faro') returning id",[uid]);return val("select selfia_save_turn($1,gen_random_uuid(),'Continuar Faro',$2,$3,$4)",[cid,turn,selected,g]);};
+  const first=await talk(goal);
+  turn.situation.title='Otro título para la misma reunión';
+  for(let i=0;i<3;i++)assert.equal((await talk(goal)).situation.id,first.situation.id);
+  assert.equal(await val('select count(*)::int from situations'),1);
+  // Reconstruct a legacy unlinked goal only when its existing action supplies one unique subject.
+  const legacy=await val("insert into goals(user_id,title,life_area) values($1,'Legado','work') returning id",[uid]);
+  await db.query("insert into commitments(user_id,what,goal_id,situation_id) values($1,'Aceptada antes del arreglo',$2,$3)",[uid,legacy,first.situation.id]);
+  assert.equal((await talk(legacy)).situation.id,first.situation.id);
+  const unrelated=await talk(null);assert.notEqual(unrelated.situation.id,first.situation.id);
+  const event=await row("insert into agenda_events(user_id,title,scheduled_start,source_message_id) values($1,'Ensayar',now(),$2) returning *",[uid,first.source_message_id]);
+  const old=await val("select selfia_review_action($1,'partially_done','Preparé una tabla','La tabla ayudó','Ensayar',null,gen_random_uuid(),$2)",[event.id,event.updated_at]);
+  const current=await row('select * from agenda_events where id=$1',[event.id]);
+  const request=await val('select gen_random_uuid()');
+  const args=[old.review.id,event.id,request,current.updated_at];
+  const correct=()=>val("select selfia_correct_review($1,$2,'partially_done','La tabla bloqueó','Me ayudó una sola pregunta','Probar la pregunta',null,$3,$4)",args);
+  const fixed=await correct();assert.equal(fixed.review.supersedes_id,old.review.id);
+  assert.equal((await correct()).replayed,true);
+  assert.equal(await val('select count(*)::int from action_reviews'),2);
+  assert.equal(await val('select status from memories where id=$1',[old.memory_id]),'obsolete');
+  assert.equal(await val('select count(*)::int from memory_revisions'),1);
+  const data={};for(const [key,table] of Object.entries({memories:'memories',history:'messages',sources:'messages',situations:'situations',commitments:'commitments',agenda:'agenda_events',goals:'goals',reviews:'action_reviews',memoryUses:'turn_receipts'}))data[key]=(await db.query('select * from '+table)).rows;
+  const context=continuityContext(data);assert.equal(context.memories.length,1);assert.equal(context.memories[0].content,'Me ayudó una sola pregunta');assert.ok(!JSON.stringify(context).includes('La tabla ayudó'));
+  await assert.rejects(()=>val("select selfia_correct_review($1,$2,'done','','','',null,gen_random_uuid(),$3)",[old.review.id,event.id,current.updated_at]),/review_changed_reload/);
+  await db.query("update goals set status='paused' where id=$1",[goal]);await db.query("update goals set status='active' where id=$1",[goal]);
+  assert.equal(await val("select count(*)::int from goal_revisions where goal_id=$1",[goal]),3);
+  const fresh=await row('select * from agenda_events where id=$1',[event.id]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false)",[other]);
+  assert.equal(await val('select count(*)::int from goal_revisions'),0);
+  await assert.rejects(()=>val("select selfia_correct_review($1,$2,'done','','','',null,gen_random_uuid(),$3)",[fixed.review.id,event.id,fresh.updated_at]),/event_not_found/);
+  const own=await row("insert into agenda_events(user_id,title,scheduled_start) values($1,'Otro usuario',now()) returning *",[other]);
+  await assert.rejects(()=>val("select selfia_correct_review($1,$2,'done','','','',null,gen_random_uuid(),$3)",[fixed.review.id,own.id,own.updated_at]),/review_not_found/);
+  await db.exec('reset role;set role anon;');await assert.rejects(()=>val("select selfia_correct_review($1,$2,'done','','','',null,gen_random_uuid(),$3)",[fixed.review.id,event.id,fresh.updated_at]),/permission denied/);
+ }finally{await db.close()}
+});
