@@ -3,7 +3,13 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
 import {continuityContext} from '../../supabase/functions/_shared/continuity.ts';
-import {areaSummary,localDate,safeLink} from '../src/continuity.js';
+import {areaSummary,localDate,safeLink,reviewSummary} from '../src/continuity.js';
+test('evolution keeps moved actions and replaces corrected outcomes without double counting',()=>{
+ const agenda=[{id:'a',status:'planned'},{id:'b',status:'done'},{id:'c',status:'planned'},{id:'legacy',status:'partially_done'}];
+ const reviews=[{event_id:'a',status:'moved',created_at:'2026-10-08T10:00:00Z'},{event_id:'b',status:'done',created_at:'2026-10-08T11:00:00Z'},{event_id:'a',status:'partially_done',created_at:'2026-10-07T10:00:00Z'}];
+ assert.deepEqual(reviewSummary(agenda,reviews),{total:3,done:1,partial:1,moved:1});
+ assert.deepEqual(reviewSummary(agenda,[...reviews,{event_id:'a',status:'done',created_at:'2026-10-09T10:00:00Z'}]),{total:3,done:2,partial:1,moved:0});
+});
 const uid='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002';
 const req='20000000-0000-4000-8000-000000000001';
 test('complete synthetic cycle, correction, withdrawal, rollback and user isolation',async()=>{

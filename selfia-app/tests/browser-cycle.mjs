@@ -7,7 +7,7 @@ import {PGlite} from '@electric-sql/pglite';
 import {continuityContext} from '../../supabase/functions/_shared/continuity.ts';
 const uid='10000000-0000-4000-8000-000000000001';
 await mkdir('test-results',{recursive:true});
-const bundle=await build({entryPoints:['src/main.jsx'],bundle:true,write:false,loader:{'.css':'empty'},define:{'import.meta.env':JSON.stringify({VITE_SUPABASE_URL:'https://selfia-test.supabase.co',VITE_SUPABASE_PUBLISHABLE_KEY:'test-publishable'})}});
+const bundle=await build({entryPoints:['src/main.jsx'],bundle:true,write:false,loader:{'.css':'empty'},define:{'import.meta.env':JSON.stringify({VITE_SUPABASE_URL:'https://selfia-test.supabase.co',VITE_SUPABASE_PUBLISHABLE_KEY:'test-publishable',VITE_CONTINUITY_READY:'true'})}});
 const code=bundle.outputFiles[0].text,css=await readFile('src/styles.css','utf8');
 const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/app.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html');res.end(req.url==='/app.js'?code:req.url==='/style.css'?css:'<html lang="es"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><div id="root"></div><script src="/app.js"></script></html>')});
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
@@ -46,7 +46,10 @@ try{
     data=await scalar('select '+name+'('+entries.map(([k],i)=>k+' => $'+(i+1)).join(',')+')',entries.map(([,v])=>v));
    }else{
     const table=url.pathname.split('/').at(-1);assert.match(table,/^[a-z_]+$/);
-    if(route.request().method()==='POST'){
+    if(route.request().method()==='PATCH'){
+     const entries=Object.entries(body),filters=[...url.searchParams.entries()].filter(([k,v])=>k!=='select'&&k!=='order'&&v.startsWith('eq.'));
+     assert.ok(filters.length);data=await q('update '+table+' set '+entries.map(([k],i)=>k+'=$'+(i+1)).join(',')+' where '+filters.map(([k],i)=>k+'=$'+(entries.length+i+1)).join(' and ')+' returning *',[...entries.map(([,v])=>v),...filters.map(([,v])=>v.slice(3))]);
+    }else if(route.request().method()==='POST'){
      const entries=Object.entries(body);data=await q('insert into '+table+'('+entries.map(([k])=>k).join(',')+') values('+entries.map((_,i)=>'$'+(i+1)).join(',')+') returning *',entries.map(([,v])=>v));
     }else{
      const filters=[...url.searchParams.entries()].filter(([k,v])=>k!=='select'&&k!=='order'&&v.startsWith('eq.'));
@@ -93,6 +96,19 @@ try{
  await page.getByRole('button',{name:'Guardado en mi semana',exact:true}).waitFor();
  await page.screenshot({path:'test-results/planner-mobile.png',fullPage:true});
  assert.equal((await q("select count(*)::int as n from agenda_events"))[0].n,2);
+ await q("insert into goals(user_id,title,life_area,status) values($1,'Objetivo recuperable','work','paused')",[uid]);
+ // Reload obtains the record through the UI's actual data path.
+ await page.reload();await page.getByRole('button',{name:'Mi vida',exact:true}).click();await page.getByRole('button',{name:'Objetivos',exact:true}).click();
+ await page.getByRole('button',{name:'Retomar objetivo',exact:true}).click();
+ await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Pausar',exact:true}).waitFor();
+ assert.equal(await scalar("select status from goals where title='Objetivo recuperable'"),'active');
+ await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Ya no encaja',exact:true}).click();
+ await page.getByText('Objetivos cerrados (1)',{exact:true}).click();await page.getByRole('button',{name:'Reabrir objetivo',exact:true}).click();
+ await page.locator('.goalCard').filter({hasText:'Objetivo recuperable'}).getByRole('button',{name:'Pausar',exact:true}).waitFor();
+ assert.equal(await scalar("select status from goals where title='Objetivo recuperable'"),'active');
+ await page.getByRole('button',{name:'Evolución',exact:true}).click();
+ await page.getByText('0 completadas · 1 parciales · 0 movidas',{exact:true}).waitFor();
+ await page.screenshot({path:'test-results/evolution-mobile.png',fullPage:true});
  assert.deepEqual(errors,[]);assert.equal(realRequests,0);
  console.log('PASS browser cycle: action acceptance → schedule → partial outcome → learning → correction → next conversation → withdrawal → structured plan. No external requests; AI simulated, PostgreSQL/RLS real.');
 }catch(e){if(page){console.log('UI state:',await page.locator('body').innerText());await page.screenshot({path:'test-results/error.png',fullPage:true})}throw e}finally{await browser.close();server.close();await db.close()}

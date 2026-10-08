@@ -80,5 +80,16 @@ The test project's security advisor reports the leaked-password protection warni
 
 ## Limits
 
+### Mobile follow-through (2026-10-08)
+
+The founder preview was subsequently configured against the existing production backend by a separate change (161ad6f). Its advanced continuity RPCs remain disabled against production. Do not use that preview to validate the new cycle. A separate `selfia-continuity-preview` branch mirrors the reviewed safe-branch commit and has PREVIEW-only configuration for SELF-IA Pruebas; it contains no copied real data. Keep founder preview configuration and production deployment unchanged.
+
+Paused goals now remain visible and can be resumed; completed/abandoned goals remain in a closed-goals section and can be reopened explicitly. Evolution counts each action once using its most recent review, including moved actions whose agenda status returns to planned. Historical corrections replace the displayed result rather than double-counting an action. Legacy outcomes without review records are retained in the summary.
+
+Local build, three database/logic tests and the complete 390px mobile integration test pass, including pause recovery, closing/reopening a goal and the outcome summary. The local browser adapter now handles goal PATCH requests and explicitly enables continuity only for its synthetic backend. The model is simulated in this UI test. Current published UI verification is blocked by the desktop browser tool's Windows sandbox startup error; this does not establish a deployment error. The API-key expiry remains 2026-10-13.
+
+Today's repeat of `test:cloud` stopped at synthetic Auth sign-in because this machine could not connect to the isolated Supabase host within ten seconds (`UND_ERR_CONNECT_TIMEOUT`), before any app-data operation. Earlier cloud/live passes remain historical evidence; they do not establish current network availability. Do not claim today's published end-to-end verification until browser access and this connection are restored.
+
 Memory withdrawal excludes attributable context and conservatively excludes untraceable legacy personalization; it does not delete historical records. Some older relationships have no provenance until the user explicitly reconnects them. Local integration, cloud persistence, deployed access guards, published browser persistence and a synthetic live model/discovery cycle are verified. The test key expires on 2026-10-13. This branch is a reviewable implementation, not approval to publish to production.
+
 

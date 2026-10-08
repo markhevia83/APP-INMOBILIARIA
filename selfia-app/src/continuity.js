@@ -19,4 +19,10 @@ export function areaSummary(area,{situations,goals,agenda,reviews=[]},now=new Da
  return {state,trend,pending};
 }
 export function safeLink(url){try{const u=new URL(url);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}}
+export function reviewSummary(agenda,reviews=[]){
+ const byEvent=new Map(agenda.filter(e=>e.status!=='planned').map(e=>[e.id,e]));
+ for(const r of reviews.slice().sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)))byEvent.set(r.event_id,r);
+ const rows=[...byEvent.values()];
+ return {total:rows.length,done:rows.filter(r=>r.status==='done').length,partial:rows.filter(r=>r.status==='partially_done').length,moved:rows.filter(r=>r.status==='moved').length};
+}
 
