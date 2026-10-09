@@ -30,3 +30,13 @@ export function futureSchedule(now=new Date()){
  const d=new Date(now);d.setMinutes(d.getMinutes()+60,0,0);
  return {date:localDate(d),time:String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
 }
+export function summaryVersions(rows){
+ const versions=new Map();
+ for(const row of rows){
+  const key=JSON.stringify([row.user_id,row.situation_id,row.source_message_id,row.summary,row.created_at]);
+  if(!versions.has(key))versions.set(key,{...row,memory_ids:[],revision_ids:[]});
+  const version=versions.get(key);version.revision_ids.push(row.id);
+  if(row.memory_id&&!version.memory_ids.includes(row.memory_id))version.memory_ids.push(row.memory_id);
+ }
+ return [...versions.values()];
+}

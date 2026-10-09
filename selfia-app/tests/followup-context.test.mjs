@@ -4,12 +4,17 @@ import {readFile} from 'node:fs/promises';
 import {PGlite} from '@electric-sql/pglite';
 import {continuityContext} from '../../supabase/functions/_shared/continuity.ts';
 import {loadContext} from '../../supabase/functions/_shared/load-context.ts';
-import {futureSchedule,areaSummary} from '../src/continuity.js';
+import {futureSchedule,areaSummary,summaryVersions} from '../src/continuity.js';
 import {availablePlans} from '../../supabase/functions/_shared/plan-timing.ts';
 import {build} from 'esbuild';
 import {renderToStaticMarkup} from 'react-dom/server';
 import React from 'react';
 const empty=()=>({memories:[],sources:[],history:[],situations:[],commitments:[],agenda:[],goals:[],reviews:[],memoryUses:[],revisions:[]});
+test('summary history groups one snapshot with two causes without merging separate historical versions',()=>{
+ const first={id:'a',user_id:'u',situation_id:'s',source_message_id:'msg',summary:'Versión antigua',created_at:'2026-10-08T18:35:07.539303Z',memory_id:'m1'};
+ const rows=[first,{...first,id:'b',memory_id:'m2'},{...first,id:'c',created_at:'2026-10-09T10:00:00Z'},{...first,id:'d',source_message_id:'other'}];
+ const versions=summaryVersions(rows);assert.equal(versions.length,3);assert.deepEqual(versions[0].memory_ids,['m1','m2']);assert.deepEqual(versions[0].revision_ids,['a','b']);assert.equal(rows.length,4);assert.ok(!('memory_ids'in rows[0]));
+});
 test('today plans reject closed venues, elapsed events and insufficient visit time',()=>{
  const now=new Date('2026-10-08T18:44:00Z');
  const closed={title:'Museo cerrado',source_url:'https://example.test/',timing_kind:'open_window',requires_opening_hours:true,time_verified:true,starts_at:'2026-10-08T08:00:00Z',ends_at:'2026-10-08T18:00:00Z',duration_minutes:60};

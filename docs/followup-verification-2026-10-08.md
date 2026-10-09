@@ -32,3 +32,18 @@ Astra confirmó la recuperación factual de Faro y Huerto, persistencia de plane
 - P3: «no declarado» confundía una retirada con ausencia histórica. El contexto indica la exclusión y las instrucciones distinguen un paso vigente de uno retirado sin reconstruir su contenido.
 
 Las pruebas de retirada cubren también correcciones heredadas y reformulaciones diferentes; se conservan el resultado factual y la fecha. No se altera ni borra ningún plan antiguo guardado: las comprobaciones nuevas se aplican a propuestas nuevas.
+
+## Cierre independiente — 9 de octubre
+
+Astra terminó el informe sobre la preview `678acf4`, cerrando la evidencia interactiva obtenida el día 8. La ejecución anterior había quedado interrumpida después de las comprobaciones; el cierre recupera esa evidencia, no presenta los planes del 8 como disponibles el 9.
+
+- P1 de paso retirado heredado: pasa. Formulario vacío, corrección factual conserva contexto/fecha/hora, chat no recupera el recordatorio retirado.
+- P2 de historial: pasa. Versiones antiguas visibles sin reactivar la recomendación.
+- P2 de horarios: caso probado pasa. Fuente confirma sesión de las 22:00, sugerencia correcta, rechazo de las 23:00. No se ofrece el Prado cerrado.
+- P3 de redacción: pasa en la respuesta observada, distingue información vigente de historia.
+- Persistencia: cine y alternativa flexible guardados; tras recargar mantienen descripción, motivo, horario y fuente. Evolución conserva tres acciones revisadas, sin multiplicarlas por sus correcciones.
+- No encontró nuevos fallos bloqueantes en este recorrido. Cuenta sintética B exclusivamente; pestañas temporales cerradas.
+
+Observación menor final: el historial del huerto mostraba dos entradas iguales con fecha idéntica. La consulta de evidencia confirmó una sola versión invalidada por dos recuerdos distintos, no una doble acción. Se corrigió la presentación agrupando esa versión exacta y mostrando el número de recuerdos relacionados. Los registros originales y sus causas permanecen intactos; versiones con otra fecha u origen siguen separadas. Prueba adicional pasa; total actual: doce pruebas y construcción satisfactoria. Esta última agrupación se verificó automáticamente y no forma parte de la comprobación independiente de Astra sobre `678acf4`.
+
+Auditoría cerrada para los casos enumerados. Antes de publicar: evaluación más amplia con usuarios y cobertura de voz, accesibilidad, concurrencia y fallos de servicios; revisar el aviso conocido de contraseñas filtradas y renovar la clave temporal de pruebas si se usa después del 13 de octubre. Ningún cambio de producción se autorizó ni ejecutó en este cierre. Cursor final `4efc36ef-fbdf-4b18-8d6d-e7ee85dbf658:2`.
