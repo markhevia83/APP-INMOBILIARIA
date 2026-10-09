@@ -1,0 +1,20 @@
+project_id = "selfia-preview"
+
+[functions.selfia-chat]
+verify_jwt = false
+
+[functions.selfia-context]
+verify_jwt = false
+
+[functions.selfia-daily]
+verify_jwt = false
+
+[functions.selfia-discover]
+verify_jwt = false
+
+[functions.selfia-motivation]
+verify_jwt = false
+
+[functions.selfia-onboarding]
+verify_jwt = false
+
