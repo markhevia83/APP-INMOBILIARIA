@@ -1,3 +1,4 @@
+import {limitedAiFetch} from '../_shared/ai-request.ts';
 import {loadContext} from "../_shared/load-context.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"};
@@ -53,9 +54,9 @@ Perfil declarado: ${JSON.stringify(profile?.base_profile??{})}
 Situaciones abiertas: ${JSON.stringify(situations??[])}
 Compromisos: ${JSON.stringify(commitments??[])}`;
  const schema={type:"object",additionalProperties:false,properties:{message:{type:"string"},cta:{type:"string"},prompt:{type:"string"}},required:["message","cta","prompt"]};
- const rr=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({model:Deno.env.get("OPENAI_MODEL")||"gpt-5.6",reasoning:{effort:"low"},instructions,input:"Genera el saludo de hoy.",max_output_tokens:350,text:{format:{type:"json_schema",name:"daily_checkin",strict:true,schema}}})});
+ const rr=await limitedAiFetch(user.id,'daily',null,{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({store:false,model:Deno.env.get("OPENAI_MODEL")||"gpt-5.6",reasoning:{effort:"low"},instructions,input:"Genera el saludo de hoy.",max_output_tokens:350,text:{format:{type:"json_schema",name:"daily_checkin",strict:true,schema}}})});
  const out=await rr.json();
- if(!rr.ok)return json({error:out?.error?.code??"openai_error",message:out?.error?.message??"No se pudo generar el saludo."},502);
+ if(!rr.ok)return json({error:out?.error?.code??"openai_error",message:out?.error?.message??"No se pudo generar el saludo."},rr.status===429?429:rr.status===413?413:502);
  let raw=String(out?.output_text??"").trim();
  if(!raw&&Array.isArray(out?.output))raw=out.output.flatMap((x:any)=>x?.content??[]).filter((x:any)=>x?.type==="output_text").map((x:any)=>x.text).join("\n").trim();
  const parsed=JSON.parse(raw);

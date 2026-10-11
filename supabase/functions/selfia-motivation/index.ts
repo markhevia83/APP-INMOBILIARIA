@@ -1,3 +1,4 @@
+import {limitedAiFetch} from '../_shared/ai-request.ts';
 import {loadContext} from "../_shared/load-context.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"};
@@ -35,12 +36,12 @@ Feedback previo: ${JSON.stringify(feedback??[])}`;
   title:{type:"string"},text:{type:"string"},format:{type:"string",enum:["phrase","boost","video"]},video_query:{type:["string","null"]}
  },required:["title","text","format","video_query"]};
  try{
-  const rr=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({
-   model:Deno.env.get("OPENAI_MODEL")||"gpt-5.6",reasoning:{effort:"low"},instructions,input:"Genera una intervención para este momento.",max_output_tokens:600,
+  const rr=await limitedAiFetch(user.id,'motivation',null,{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({
+   store:false,model:Deno.env.get("OPENAI_MODEL")||"gpt-5.6",reasoning:{effort:"low"},instructions,input:"Genera una intervención para este momento.",max_output_tokens:600,
    text:{format:{type:"json_schema",name:"motivation",strict:true,schema}}
   })});
   const out=await rr.json();
-  if(!rr.ok)return json({error:out?.error?.code??"openai_error",message:out?.error?.message??"No se pudo generar motivación."},502);
+  if(!rr.ok)return json({error:out?.error?.code??"openai_error",message:out?.error?.message??"No se pudo generar motivación."},rr.status===429?429:rr.status===413?413:502);
   let raw=String(out?.output_text??"").trim();
   if(!raw&&Array.isArray(out?.output))raw=out.output.flatMap((x:any)=>x?.content??[]).filter((x:any)=>x?.type==="output_text").map((x:any)=>x.text).join("\n").trim();
   const parsed=JSON.parse(raw);

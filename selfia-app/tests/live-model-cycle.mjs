@@ -47,5 +47,5 @@ try{
   const denied=await fetch(config.url+'/functions/v1/selfia-chat',{method:'POST',headers:{apikey:config.key,authorization:'Bearer '+otherAuth.data.session.access_token,'content-type':'application/json'},body:JSON.stringify({request_id:randomUUID(),situation_id:first.situation.id,goal_id:goal.id,content:'Synthetic cross-owner attempt'})});
   assert.notEqual(denied.status,200);assert.equal((await denied.json()).error,'context_unavailable');
   console.log('PASS: explicitly selected links remain owner-scoped in deployed chat');
- }finally{await other.auth.signOut();}
-}finally{await sb.auth.signOut();}
+ }finally{await other.auth.signOut({scope:'local'});}
+}finally{await sb.auth.signOut({scope:'local'});}

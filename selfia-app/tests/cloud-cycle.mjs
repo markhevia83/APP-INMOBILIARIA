@@ -84,4 +84,4 @@ if(live.status===503&&live.body.error==='ai_not_configured'){
  assert.equal(live.status,200,JSON.stringify(live.body));assert.ok(live.body.reply);
  console.log('PASS: live model chat response (full model quality/continuity assessment still required)');
 }
-for(const {sb} of clients)await sb.auth.signOut();
+for(const {sb} of clients)await sb.auth.signOut({scope:'local'});

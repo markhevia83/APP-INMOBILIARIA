@@ -1,5 +1,6 @@
 import {continuityContext} from './continuity.ts';
-export async function loadContext(sb:any,userId:string,conversationId:string|null=null,selectedSituation:string|null=null,selectedGoal:string|null=null) {
+import {independentProfileItems} from './profile-provenance.ts';
+export async function loadContext(sb:any,userId:string,conversationId:string|null=null,selectedSituation:string|null=null,selectedGoal:string|null=null,selectedAction:string|null=null) {
  const rows=await Promise.all([
   sb.from('profiles').select('base_profile,assistant_style').eq('user_id',userId).maybeSingle(),
   sb.from('profile_items').select('*').eq('user_id',userId).eq('active',true).limit(80),
@@ -21,6 +22,13 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
   if(r.error)throw Error('memory_context_unavailable');memories.push(...r.data);
   if(r.data.length<500)break;
   if(offset===9500)throw Error('memory_context_too_large');
+ }
+ if(selectedAction){
+  const{data:action,error}=await sb.from('commitments').select('*').eq('user_id',userId).eq('id',selectedAction).maybeSingle();
+  if(error||!action)throw Error('selected_action_not_found');
+  if(selectedSituation&&selectedSituation!==action.situation_id||selectedGoal&&selectedGoal!==action.goal_id)throw Error('selected_action_context_conflict');
+  selectedSituation=action.situation_id;selectedGoal=action.goal_id;
+  if(!commitments.some((c:any)=>c.id===action.id))commitments.push(action);
  }
  for(const [id,table,collection] of [[selectedSituation,'situations',situations],[selectedGoal,'goals',goals]] as any[]){
   if(id&&!collection.some((x:any)=>x.id===id)){
@@ -52,12 +60,12 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
   throw Error('selected_context_too_large');
  };
  const merge=(target:any[],extra:any[])=>{for(const x of extra)if(!target.some(y=>y.id===x.id))target.push(x)};
- for(const [column,id] of [['situation_id',selectedSituation],['goal_id',selectedGoal]])if(id){
+ for(const [column,id] of (selectedAction?[['commitment_id',selectedAction]]:[['situation_id',selectedSituation],['goal_id',selectedGoal]]))if(id){
   for(const [table,target] of [['agenda_events',agenda],['commitments',commitments]] as any[]){
-   merge(target,await allSelected(sb.from(table).select('*').eq('user_id',userId).eq(column,id).order('id')));
+   merge(target,await allSelected(sb.from(table).select('*').eq('user_id',userId).eq(table==='commitments'&&selectedAction?'id':column,id).order('id')));
   }
  }
- const selectedEvents=agenda.filter((a:any)=>selectedSituation&&a.situation_id===selectedSituation||selectedGoal&&a.goal_id===selectedGoal).map((a:any)=>a.id);
+ const selectedEvents=agenda.filter((a:any)=>selectedAction?a.commitment_id===selectedAction:selectedSituation&&a.situation_id===selectedSituation||selectedGoal&&a.goal_id===selectedGoal).map((a:any)=>a.id);
  for(let i=0;i<selectedEvents.length;i+=100){
   merge(reviews,await allSelected(sb.from('action_reviews').select('*').eq('user_id',userId).in('event_id',selectedEvents.slice(i,i+100)).order('id')));
  }
@@ -94,7 +102,7 @@ export async function loadContext(sb:any,userId:string,conversationId:string|nul
  const prioritize=(rows:any[])=>rows.sort((a:any,b:any)=>Number(Boolean(b.id===selectedSituation||b.id===selectedGoal||b.situation_id===selectedSituation&&selectedSituation||b.goal_id===selectedGoal&&selectedGoal||selectedEvents.includes(b.event_id)))-Number(Boolean(a.id===selectedSituation||a.id===selectedGoal||a.situation_id===selectedSituation&&selectedSituation||a.goal_id===selectedGoal&&selectedGoal||selectedEvents.includes(a.event_id))));
  const context=continuityContext({memories,sources,history,situations:prioritize(situations),commitments:prioritize(commitments),agenda:prioritize(agenda),goals:prioritize(goals),reviews:prioritize(reviews),memoryUses,revisions});
  prioritize(context.reviews);
- return {...context,selectedSituation,profile:context.allowLegacy?profile:null,profileItems:context.allowLegacy?profileItems:[],
+ return {...context,selectedSituation,selectedGoal,selectedAction,profile:context.allowLegacy?profile:null,profileItems:context.allowLegacy?profileItems:independentProfileItems(profileItems),
   hypotheses:context.allowLegacy?hypotheses:[],people:context.allowLegacy?people:[]};
 }
 

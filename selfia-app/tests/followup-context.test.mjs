@@ -62,6 +62,10 @@ test('selected old subject recovers events and results beyond general pages usin
  const sb={from(table){const filters=[],orders=[];let limit=Infinity,start=0,single=false;
   const q={select(){return q},eq(k,v){filters.push(x=>x[k]===v);return q},in(k,v){filters.push(x=>v.includes(x[k]));return q},order(k,{ascending=true}={}){orders.push([k,ascending]);return q},limit(n){limit=n;return q},range(a,b){start=a;limit=b-a+1;return q},overlaps(k,v){filters.push(x=>(x[k]||[]).some(id=>v.includes(id)));return q},maybeSingle(){single=true;return q},then(resolve){calls.push({table,ownerFiltered:filters.some(f=>!f({user_id:'outsider'}))});let rows=tables[table].filter(x=>filters.every(f=>f(x)));for(const[k,asc]of orders)rows.sort((a,b)=>String(a[k]).localeCompare(String(b[k]))*(asc?1:-1));rows=rows.slice(start,start+limit);return Promise.resolve({data:single?rows[0]||null:rows}).then(resolve)}};return q}};
  const c=await loadContext(sb,'owner',null,null,'g');assert.equal(c.selectedSituation,'s');assert.ok(c.agenda.some(a=>a.id==='e39'));assert.ok(c.reviews.some(r=>r.event_id==='e39'&&r.result_note==='La tienda estaba cerrada'));assert.ok(calls.every(x=>x.ownerFiltered));
+ tables.commitments.push({id:'action-old',user_id:'owner',situation_id:'s',goal_id:'g',status:'done',what:'Retomar semillas'});tables.agenda_events[39].commitment_id='action-old';
+ const action=await loadContext(sb,'owner',null,null,null,'action-old');assert.equal(action.selectedAction,'action-old');assert.equal(action.selectedGoal,'g');assert.ok(action.agenda.some(a=>a.commitment_id==='action-old'));assert.ok(action.reviews.some(r=>r.event_id==='e39'));
+ await assert.rejects(()=>loadContext(sb,'outsider',null,null,null,'action-old'),/selected_action_not_found/);
+ await assert.rejects(()=>loadContext(sb,'owner',null,'different',null,'action-old'),/selected_action_context_conflict/);
  tables.action_reviews[0].next_step='Reutilizar objeto retirado';tables.action_reviews[0].supersedes_id='ancestor';
  tables.action_reviews.push({id:'ancestor',user_id:'owner',event_id:'e0',next_step:'Reutilizar objeto retirado',learning:'Declaración retirada',created_at:'1980-01-01'});
  tables.memories.push({id:'m',user_id:'owner',status:'do_not_store',user_validation:'rejected',content:'Declaración retirada',structured_data:{review_id:'ancestor'}});
@@ -70,7 +74,7 @@ test('selected old subject recovers events and results beyond general pages usin
 test('summary invalidation is traceable and RLS isolated; plan sources persist and reject unsafe URLs',async()=>{
  const db=new PGlite(),uid='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002';
  try{
-  for(const p of ['./baseline.sql','../../supabase/migrations/20261006142249_continuity_cycle.sql','../../supabase/migrations/20261008143624_astra_continuity_repairs.sql','../../supabase/migrations/20261008182709_audit_followup_context.sql'])await db.exec(await readFile(new URL(p,import.meta.url),'utf8'));
+  for(const p of ['./baseline.sql','../../supabase/migrations/20261006142249_continuity_cycle.sql','../../supabase/migrations/20261008143624_astra_continuity_repairs.sql','../../supabase/migrations/20261008182709_audit_followup_context.sql','../../supabase/migrations/20261011161012_audit_integrity.sql'])await db.exec(await readFile(new URL(p,import.meta.url),'utf8'));
   await db.exec(`insert into auth.users values ('${uid}'),('${other}');set role authenticated;`);await db.query("select set_config('request.jwt.claim.sub',$1,false)",[uid]);
   const val=async(sql,args=[])=>Object.values((await db.query(sql,args)).rows[0])[0];
   const cid=await val("insert into conversations(user_id) values($1) returning id",[uid]);
