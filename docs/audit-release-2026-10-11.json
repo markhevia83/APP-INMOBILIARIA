@@ -2,7 +2,7 @@
   "date": "2026-10-11",
   "status": "internal_candidate_not_approved_for_external_beta",
   "repository": "markhevia83/APP-INMOBILIARIA",
-  "code_commit": "81f97400c06606f73a68afc091b0ec3d905c17a1",
+  "code_commit": "5c100576ba602ade713a7278806b9c4d5d4e16bb",
   "release_commit_note": "The containing Git commit may add documentation only; verify its SHA through Vercel gitSource/meta and compare source hashes to code_commit.",
   "source_branch": "selfia-audit-p0-onboarding",
   "preview_branch": "selfia-continuity-preview",
@@ -29,7 +29,9 @@
     "hosted_sql": "passed test-only synthetic transaction; rolled back",
     "rls_public_tables": 23,
     "real_auth_http_concurrency_model": "blocked: public Supabase host unreachable in local environment; not passed",
-    "external_beta": "not approved; see remediation checklist"
+    "external_beta": "not approved; see remediation checklist",
+    "deno_chat_provenance": "passed on local corrected handler; synthetic backend/model; keeps independent declaration and excludes withdrawn/legacy facts",
+    "independent_browser": "Astra logged in with B on release 6559f57; reproduced F09 and verified F03 differing-date rejection; review pending approval, not final"
   },
   "source_sha256_git_blob": {
     "selfia-app/package.json": "883af60e8fd7e12beaa87c3486cb990eeb421bacf00d68921a2d59e6465fb5a3",
@@ -37,17 +39,17 @@
     "selfia-app/pnpm-workspace.yaml": "6ef0ac8a07895b4ffcc207322095ce428bc1153ae8bd29a3694dce2d0e5ac43d",
     "selfia-app/src/ChatText.jsx": "4722cc2cea9591d56ea13e637e244a501b9e5bbe7d50445391c668ece1e3f5ec",
     "selfia-app/src/ContinuityPanels.jsx": "52bb79a430a7666994ed35d5cd5e566ec01b449517fa5b9004cd4c4c078863f8",
-    "selfia-app/src/api-protocol.js": "97a955514528d12d8febfeb318ee8501593e91109e1090927d50be2a0afab4b6",
+    "selfia-app/src/api-protocol.js": "5508e95d9bd8d78f988f08ebd403940e115425c73bd59a75476da0fcc17cca24",
     "selfia-app/src/chat-workspace.js": "81a50d48d20db62e09cbdfdc4da8d6f5f4e77e6ec5da9fe792bf1377b9301252",
     "selfia-app/src/continuity.js": "da08dee4585b00e77014302bea9b1872041a5d0c9b003c05a082c1d6f36d2054",
-    "selfia-app/src/main.jsx": "dc435ac31c4ed4e666a59a2c87370b116a1a4aaf58be9e72a7d725e8e198bd02",
+    "selfia-app/src/main.jsx": "bae4236b3c5cdbb70061d67b1adb105cc9367cee74db49bdc348bd8a27bf2ca6",
     "selfia-app/src/styles.css": "f2ce733a3f496bc35810e409b97d68aa5c76e90deff8d9b80cc9a72f2021b871",
     "supabase/functions/_shared/ai-request.ts": "e1bd7ef9546901f1c8fc9439c290411593278eb20d3963a853d0369aaaf46deb",
     "supabase/functions/_shared/continuity.ts": "51306d6f333ae466ac3ab49c885b8165f7dfe611ecc80b1e8999f2f8522a8a6b",
     "supabase/functions/_shared/load-context.ts": "88cf759aafb8d023c1233742b683587283ea0a0ec7db2381e78b49a8173c2685",
     "supabase/functions/_shared/plan-timing.ts": "7f0a38ae7a7cda675604cde26831f86d49a4f81329a7d17e3aefdb8284aca9a9",
     "supabase/functions/_shared/profile-provenance.ts": "42a943b765f7ce63c1bdcc2974ea32b467fdf4edd54ab3f11dbb82d270247ea3",
-    "supabase/functions/selfia-chat/index.ts": "3161a323ab3b73fa1e89c7f9f192a454b486aac9e0dd70ec50a2744e5da722f0",
+    "supabase/functions/selfia-chat/index.ts": "b2935ab7631914e5e4347acdb67a41888979fe3ce2c8cdf2806f95536fa0b6a5",
     "supabase/functions/selfia-context/index.ts": "680388ff25ee5d714327954e10f549c05a813243d55de6373e7b624823f05052",
     "supabase/functions/selfia-daily/index.ts": "96eea914f12dd62c92e4b216a455bbb40b9985185d73c6bed2230705fb2ba860",
     "supabase/functions/selfia-discover/index.ts": "d17a899381e1ce9740fd297790e4ba7b6d1b940ee786b175137584561839be9e",
@@ -153,5 +155,17 @@
       "version": "20261011170616",
       "name": "audit_action_source_index"
     }
-  ]
+  ],
+  "pending_edge_deployments": [
+    {
+      "name": "selfia-chat",
+      "currently_hosted_version": 13,
+      "repair": "remove second legacy gate on already-filtered independent profile items",
+      "status": "auto_review_rejected_pending_explicit_human_authorization",
+      "payload_destination": "OpenAI Responses API",
+      "payload": "message and relevant conversation, explicit declarations, confirmed memories, situations, goals and actions; withdrawn memories excluded",
+      "source_sha256": "b2935ab7631914e5e4347acdb67a41888979fe3ce2c8cdf2806f95536fa0b6a5"
+    }
+  ],
+  "source_alignment_note": "selfia-chat has a tested source correction not present in hosted v13; do not treat source hashes as a deployed or independently closed fix."
 }
