@@ -31,7 +31,9 @@
     "real_auth_http_concurrency_model": "blocked: public Supabase host unreachable in local environment; not passed",
     "external_beta": "not approved; see remediation checklist",
     "deno_chat_provenance": "passed on local corrected handler; synthetic backend/model; keeps independent declaration and excludes withdrawn/legacy facts",
-    "independent_browser": "Astra logged in with B on release 6559f57; reproduced F09 and verified F03 differing-date rejection; review pending approval, not final"
+    "independent_browser": "Astra logged in with B on release 6559f57; reproduced F09 and verified F03 differing-date rejection; review pending approval, not final",
+    "deno_server_preflight": "3 passed, 0 failed on 2026-10-12: chat provenance, all six unauthenticated/invalid-token handlers, plan-search data minimization; synthetic Auth/model",
+    "real_model_f09_retest": "requested from independent Astra; pending, not passed"
   },
   "source_sha256_git_blob": {
     "selfia-app/package.json": "883af60e8fd7e12beaa87c3486cb990eeb421bacf00d68921a2d59e6465fb5a3",
@@ -69,10 +71,10 @@
   "edge_functions": [
     {
       "name": "selfia-chat",
-      "version": 13,
+      "version": 14,
       "status": "ACTIVE",
       "verify_jwt": false,
-      "ezbr_sha256": "5298827663774169a78957f0b4b9633590900737868d33691285cc71717824de"
+      "ezbr_sha256": "ce0a35c31ec1acfe1dff41b9cf37666aedb69ca9f173f2fa3c48d0eaec8b8f81"
     },
     {
       "name": "selfia-context",
@@ -156,16 +158,14 @@
       "name": "audit_action_source_index"
     }
   ],
-  "pending_edge_deployments": [
+  "pending_edge_deployments": [],
+  "source_alignment_note": "Hosted selfia-chat v14 includes the source correction in code_commit 5c100576ba602ade713a7278806b9c4d5d4e16bb. Independent real-model verification is pending; deployment is not an audit closure.",
+  "last_updated": "2026-10-12",
+  "authorizations": [
     {
-      "name": "selfia-chat",
-      "currently_hosted_version": 13,
-      "repair": "remove second legacy gate on already-filtered independent profile items",
-      "status": "auto_review_rejected_pending_explicit_human_authorization",
-      "payload_destination": "OpenAI Responses API",
-      "payload": "message and relevant conversation, explicit declarations, confirmed memories, situations, goals and actions; withdrawn memories excluded",
-      "source_sha256": "b2935ab7631914e5e4347acdb67a41888979fe3ce2c8cdf2806f95536fa0b6a5"
+      "date": "2026-10-12",
+      "scope": "test only; deploy chat repair sending relevant messages, explicit declarations, confirmed memories, situations, goals and actions to OpenAI, excluding withdrawn memories",
+      "human_reply": "Sí, autorizo ese envío en pruebas"
     }
-  ],
-  "source_alignment_note": "selfia-chat has a tested source correction not present in hosted v13; do not treat source hashes as a deployed or independently closed fix."
+  ]
 }

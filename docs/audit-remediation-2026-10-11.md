@@ -1,6 +1,6 @@
 # SELF-IA: correcciones de la auditoría del 9 de octubre
 
-Fecha: 11 de octubre de 2026. Candidato interno; **no aprobado para beta externa ni lanzamiento**.
+Fecha: 11 de octubre de 2026. Actualizado el 12 de octubre tras autorización y despliegue de F09. Candidato interno; **no aprobado para beta externa ni lanzamiento**.
 
 Fuente: `auditoria-selfia-2026-10-09.txt`, SHA-256 `e9c3658e6f3cf04ed0669ad058a485bf2405c236c2edd193e240c1943194f5aa`. Este documento complementa los informes anteriores; sus resultados históricos no certifican este candidato.
 
@@ -24,7 +24,7 @@ Fuente: `auditoria-selfia-2026-10-09.txt`, SHA-256 `e9c3658e6f3cf04ed0669ad058a4
 | F06 P1: onboarding confirma escritura fallida | Todas las transiciones y el primer turno/checkpoint son transacciones; versión y recibo de reintento; errores comprobados. | Fallo inyectado en cada escritura, snapshot antes/después y reintento; comprobación SQL remota. |
 | F07 P1: recuperación y salida | Recuperación por correo, cambio de contraseña, aviso de confirmación/enlace vencido, salida local y limpieza de cuenta. | Navegador: salida, cuenta B sin datos A. **Pendiente correo real**, redirects autorizados, link caducado/reutilizado y aislamiento entre sesiones reales. No cerrado para lanzamiento. |
 | F08 P2: dictado | Se reconstruyen todos los segmentos, con correcciones provisionales; limpieza de reconocimiento y aviso de permisos. | Prueba de segmentos. **Voz deshabilitada por defecto**; solo habilitar `VITE_VOICE_READY=true` después de verificar dispositivos/permisos. |
-| F09 P2: retirada excluye todo el perfil | Declaraciones nuevas llevan procedencia independiente. Se corrigió además un segundo filtro del prompt que descartaba incluso esas declaraciones. | Astra reprodujo la pérdida con modelo real en chat v13. El handler corregido pasa una nueva prueba Deno con la declaración presente y legado/retirada excluidos. **Corrección de chat pendiente de despliegue: revisión automática exige autorización explícita del envío de contexto personal a OpenAI.** El perfil antiguo sin procedencia sigue excluido. |
+| F09 P2: retirada excluye todo el perfil | Declaraciones nuevas llevan procedencia independiente. Se corrigió además un segundo filtro del prompt que descartaba incluso esas declaraciones. | Astra reprodujo la pérdida con modelo real en chat v13. El usuario autorizó expresamente el envío del contexto relevante a OpenAI en pruebas; el arreglo está **desplegado en chat v14**. El handler pasa la prueba de declaración presente y legado/retirada excluidos. **Pendiente repetición independiente con modelo real**. El perfil antiguo sin procedencia sigue excluido. |
 | F10 P2: completar/omitir y recarga inicial | Estados distintos; conversación y situación inicial persistidas atómicamente; recarga y reformulación retoman el mismo asunto. | SQL y navegador con cuenta B: primer diálogo→reformular→recargar→completar. |
 | F11 P2: vigencia de planes | Propuesta inmutable creada por servidor, fuente citada, expiración 30 min, día/zona/margen de 30 min revalidados al guardar; UUID de repetición. | SQL y React: otro día, expiración, hora inválida, fuente, agenda/recarga. **Planes con horario de recinto/evento excluidos** hasta verificación independiente de disponibilidad. La cita web no certifica apertura. |
 | F12 P2: contraseñas filtradas | No se rebajó protección. Supabase confirma organización `free`; advisor continúa avisando. | **Pendiente** decisión/configuración del responsable: [la función requiere Pro o superior](https://supabase.com/docs/guides/auth/password-security). No se compra ni cambia facturación automáticamente. |
@@ -63,7 +63,7 @@ El despliegue aislado 6559f57 (`dpl_6Wf96NFhhSTZuxLgFe51eFRURY4E`) estaba READY;
 | ID | Prioridad | Condición verificable para cerrar |
 |---|---|---|
 | AUTH-REAL | P1 | Registro con confirmación, correo de recuperación, redirect exacto, contraseña nueva, links vencido/reutilizado y dos sesiones reales; F07. |
-| F09-DEPLOY | P2 | Autorizar explícitamente el envío a OpenAI del mensaje/contexto relevante y declaraciones/memorias confirmadas; desplegar el arreglo probado, fijar nueva versión/hash y repetir con B/modelo real. No desplegar por otra vía para eludir el rechazo automático. |
+| F09-VERIFY | P2 | Autorización explícita y despliegue completados el 12-10-2026: chat v14, hash `ce0a35c31ec1acfe1dff41b9cf37666aedb69ca9f173f2fa3c48d0eaec8b8f81`. Repetir con B/modelo real declaración independiente, corrección y retirada. No dar por cerrado con el test simulado. |
 | PREVIEW-E2E | P1 | Release exacta, navegación móvil/escritorio y ciclo completo con red/SQL concordantes, modelo real, recarga; revisión independiente de F01–F12 y regresiones nuevas. |
 | R01-MODEL | P1 | Corrección/retirada seguida de recomendaciones, resumen, paráfrasis y nuevas declaraciones independientes en varios turnos con modelo real; conservar hechos independientes. |
 | R02-VOLUME | P2 | Asuntos/objetivos/acciones fuera de páginas recientes recuperados; seleccionar acción concreta ante contexto grande; validar carga y límites con cuentas voluminosas. |
