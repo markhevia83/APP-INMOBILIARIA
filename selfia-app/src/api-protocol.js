@@ -1,6 +1,19 @@
 const uuid = value => typeof value === 'string' && /^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(value);
 const object = value => value && typeof value === 'object' && !Array.isArray(value);
 const text = value => typeof value === 'string' && value.trim().length > 0;
+export function mutationErrorMessage(error) {
+  const value=String(error?.message||'');
+  if(value.includes('schedule_conflict_use_review'))return 'Esta acción ya tiene una fecha guardada. Para cambiarla, abre «Revisar o corregir resultado» y elige «Lo moví».';
+  if(/event_changed_reload|review_changed_reload|memory_changed_reload|session_changed_reload/.test(value))return 'Este registro ha cambiado en otra vista. Recarga la página y revisa su última versión antes de guardar.';
+  if(value.includes('request_conflict'))return 'Esta petición ya se guardó con otros datos. Recarga la página antes de volver a cambiarla.';
+  if(/plan_expired|plan_date_or_margin/.test(value))return 'El plan ha caducado o ya no da tiempo a realizarlo. Busca propuestas de nuevo.';
+  if(value.includes('future_date_required'))return 'Elige una fecha y hora futuras.';
+  if(value.includes('goal_context_conflict'))return 'El objetivo no corresponde a este asunto. Revisa el objetivo elegido antes de guardar.';
+  if(value.includes('commitment_closed'))return 'Esta acción está cerrada. Revisa su último resultado antes de volver a programarla.';
+  if(/unauthorized|permission denied|linked_record_not_found|not_found/.test(value))return 'No se puede usar este registro con tu cuenta. Recarga tus datos y vuelve a intentarlo.';
+  if(/invalid_|input_too_long/.test(value))return 'Revisa los campos del formulario antes de guardar.';
+  return 'No se pudo guardar el cambio. Conserva tus datos y vuelve a intentarlo.';
+}
 export class ProtocolError extends Error {
   constructor() { super('La respuesta llegó incompleta. Tus datos siguen en el formulario; reintenta.'); this.name = 'ProtocolError'; }
 }

@@ -139,7 +139,7 @@ CONTEXTO:
 Seguimiento del asunto elegido (completo, prioridad sobre el resumen): ${JSON.stringify(selectedContext)}
 Zona horaria del usuario: ${timezone}. Comunica las horas locales indicadas, no las horas UTC.
 Perfil inicial declarado: ${clip(JSON.stringify(context.allowLegacy?profile?.base_profile??{}:{}),7000)}
-Cómo me he ido describiendo: ${clip(JSON.stringify(context.allowLegacy?profileItems??[]:[]),6000)}
+Cómo me he ido describiendo: ${clip(JSON.stringify(profileItems??[]),6000)}
 Preferencias: ${clip(JSON.stringify(profile?.assistant_style??{}),2500)}
 Memorias confirmadas: ${clip(JSON.stringify(context.memories??[]),4500)}
 Situaciones abiertas: ${clip(JSON.stringify(context.situations??[]),5000)}
