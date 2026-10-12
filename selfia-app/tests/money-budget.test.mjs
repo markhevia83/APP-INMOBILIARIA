@@ -62,3 +62,11 @@ test('an exhausted chat request preserves its draft and terminal refusal across 
  const reload=createChatWorkspace(storage);reload.setOwner('synthetic');reload.open();assert.equal(reload.begin('Synthetic terminal request'),null);assert.equal(reload.current().draft,'Synthetic terminal request');
  await assert.rejects(()=>readApiResponse(new Response(JSON.stringify({error:'retry_limit'}),{status:429}),'selfia-chat'),e=>e.code==='retry_limit'&&e.message.includes('agotado sus intentos')&&e.message.includes('No esperes')&&!e.message.includes('un momento'));
 });
+test('onboarding preserves failed request identity and terminal refusal, keeps edits during a reply, and clears account-private drafts on logout',async()=>{
+ const {createOnboardingRequests}=await import('../src/onboarding-requests.js');const values=new Map(),storage={getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)};
+ const a=createOnboardingRequests(storage);a.setOwner('a');a.setDraft('Synthetic initial draft');const ticket=a.begin('Synthetic initial draft');a.fail(ticket,'retry_limit');
+ const reload=createOnboardingRequests(storage);reload.setOwner('a');assert.equal(reload.snapshot().pending.request_id,ticket.request.request_id);assert.equal(reload.begin('Synthetic initial draft'),null);
+ reload.setDraft('Explicit edited draft');const edited=reload.begin('Explicit edited draft');assert.notEqual(edited.request.request_id,ticket.request.request_id);reload.setDraft('New text while waiting');reload.complete(edited);assert.equal(reload.snapshot().draft,'New text while waiting');assert.equal(reload.snapshot().hasDraft,true);
+ reload.setDraft('');const empty=createOnboardingRequests(storage);empty.setOwner('a');assert.equal(empty.snapshot().hasDraft,true);assert.equal(empty.snapshot().draft,'');
+ const old=reload.begin('Old account request');reload.clear();reload.setOwner('b');assert.equal(reload.fail(old,'retry_limit'),false);assert.equal(reload.snapshot().hasDraft,false);assert.equal(storage.getItem('selfia-onboarding-a'),undefined);
+});
