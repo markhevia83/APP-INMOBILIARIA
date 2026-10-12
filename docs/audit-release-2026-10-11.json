@@ -2,7 +2,7 @@
   "date": "2026-10-11",
   "status": "internal_candidate_not_approved_for_external_beta",
   "repository": "markhevia83/APP-INMOBILIARIA",
-  "code_commit": "5ad093a097e3ee488e6b68558a11159a36572aa8",
+  "code_commit": "a5df0f7c7507f8cebb6c3fb56f089574703f0c97",
   "release_commit_note": "The containing Git commit may add documentation only; verify its SHA through Vercel gitSource/meta and compare source hashes to code_commit.",
   "source_branch": "selfia-audit-p0-onboarding",
   "preview_branch": "selfia-continuity-preview",
@@ -14,11 +14,11 @@
     "voice": "disabled unless explicitly verified and enabled",
     "timed_venue_or_event_plans": "excluded",
     "erasure": "pending request only; no deletion",
-    "ai_budget": "capacity reservations; no verified currency cap"
+    "ai_budget": "75 USD/calendar month UTC, conservative app-only reservation guard active in test; invoice cap and delivered alerts unverified; pricing review required before 2026-11-11"
   },
   "checks": {
     "local_node_tests": {
-      "passed": 23,
+      "passed": 26,
       "failed": 0
     },
     "local_react_browser": "passed; mobile+desktop; real PGlite SQL/RLS; synthetic Auth/model; no external requests",
@@ -27,29 +27,32 @@
     "build": "passed",
     "dependency_audit": "zero known findings",
     "hosted_sql": "passed test-only synthetic transaction; rolled back",
-    "rls_public_tables": 23,
+    "rls_public_tables": 25,
     "real_auth_http_concurrency_model": "Browser real login/logout/model observed; direct REST/JWT commands blocked before service; no two-device or actual network-cut proof.",
     "external_beta": "not approved; see remediation checklist",
     "deno_chat_provenance": "passed on local corrected handler; synthetic backend/model; keeps independent declaration and excludes withdrawn/legacy facts",
-    "independent_browser": "Astra completed review of 6559f57/bbba1c1 with chat v14: F01/F03 sampled pass; local logout preserved another session; F09 real-model pass; F02 reopening a goal still failed. No beta approval.",
-    "deno_server_preflight": "3 passed, 0 failed on 2026-10-12: chat provenance, all six unauthenticated/invalid-token handlers, plan-search data minimization; synthetic Auth/model",
+    "independent_browser": "Astra F02 PASS on 0856aec/chat v14, turn 01a12fb7-12bb-7810-a9c9-5957a11d3b89; previous F01/F03/F09 observations retained. No beta approval.",
+    "deno_server_preflight": "5 passed: pricing/money guard and timeout; chat provenance; all six unauthenticated/invalid-token handlers; search privacy. Synthetic Auth/model.",
     "real_model_f09_retest": "PASS independently observed by Astra with B, second explicit declaration and correction/withdrawal; broader semantic coverage remains limited.",
     "owner_sql_matrix": "PASS all 22 owner tables: foreign SELECT/UPDATE/DELETE, owner-spoof INSERT, anon SELECT; brain configuration hidden. SQL roles, not HTTP JWT.",
     "hosted_owner_links": "Missing profile/onboarding link guards reproduced and repaired in test database; foreign references rejected and legitimate inserts accepted in rolled-back synthetic transaction.",
-    "f02_reopen_repair": "PASS local React edit/navigation/reopen/reload regression plus stable goal/action identity on new subject link and intentionally empty drafts; independent new-preview retest pending."
+    "f02_reopen_repair": "PASS local React and independent Astra reopen/reload/empty draft/pause/action/subject; concrete reproduction closed.",
+    "money_guard_sql": "PASS deployed test-only transaction: reservation, settlement once, cap denial before capacity; rolled back. service_role reserve/settle also passed with rollback. Concurrency HTTP and invoice reconciliation pending.",
+    "security_advisors": "Known leaked-password WARN persists; two RLS-no-policy INFO are intentional deny-all server-only budget tables, client grants revoked. No protections reduced.",
+    "real_email_auth": "Test registration created and confirmation message received in explicitly authorized mailbox; full confirmation/recovery flow pending. Mailbox/credentials omitted from public evidence."
   },
   "source_sha256_git_blob": {
-    "selfia-app/package.json": "aeec9a5ecdd2f259d25299effebe9240391ba148c33fb3851278d9c574fb7747",
+    "selfia-app/package.json": "b84128f8817d6dc099ef99c09aac856a4d177e39d6f328313d5efcff1551c430",
     "selfia-app/pnpm-lock.yaml": "25f451a02e203864aed3105ae88094c9a7997242b4548d96a9387114120f76e4",
     "selfia-app/pnpm-workspace.yaml": "6ef0ac8a07895b4ffcc207322095ce428bc1153ae8bd29a3694dce2d0e5ac43d",
     "selfia-app/src/ChatText.jsx": "4722cc2cea9591d56ea13e637e244a501b9e5bbe7d50445391c668ece1e3f5ec",
     "selfia-app/src/ContinuityPanels.jsx": "52bb79a430a7666994ed35d5cd5e566ec01b449517fa5b9004cd4c4c078863f8",
-    "selfia-app/src/api-protocol.js": "5508e95d9bd8d78f988f08ebd403940e115425c73bd59a75476da0fcc17cca24",
+    "selfia-app/src/api-protocol.js": "091ce87f080f31c476c94808501962bba823be97126327f09de7c2cee0cff882",
     "selfia-app/src/chat-workspace.js": "27c2b27c29e72af39925a8a23be3dbe7664a812b2117ef89a2324ab809f6a693",
     "selfia-app/src/continuity.js": "da08dee4585b00e77014302bea9b1872041a5d0c9b003c05a082c1d6f36d2054",
     "selfia-app/src/main.jsx": "17536dd7c1d246dd5c241cacff2f1601993475fe23d3853f534a7b3b2f456aa3",
     "selfia-app/src/styles.css": "f2ce733a3f496bc35810e409b97d68aa5c76e90deff8d9b80cc9a72f2021b871",
-    "supabase/functions/_shared/ai-request.ts": "e1bd7ef9546901f1c8fc9439c290411593278eb20d3963a853d0369aaaf46deb",
+    "supabase/functions/_shared/ai-request.ts": "e3a63804a5b0a85d60498bb29470c91d363199fcd00c037d42790366049c33a6",
     "supabase/functions/_shared/continuity.ts": "51306d6f333ae466ac3ab49c885b8165f7dfe611ecc80b1e8999f2f8522a8a6b",
     "supabase/functions/_shared/load-context.ts": "88cf759aafb8d023c1233742b683587283ea0a0ec7db2381e78b49a8173c2685",
     "supabase/functions/_shared/plan-timing.ts": "7f0a38ae7a7cda675604cde26831f86d49a4f81329a7d17e3aefdb8284aca9a9",
@@ -70,15 +73,19 @@
     "supabase/migrations/20261011174000_audit_schedule_coherence.sql": "af910301b9c6b61ccd8e9558ab310bef969d07441cb920e996a83418a8f8d413",
     "supabase/migrations/20261011174800_audit_link_indexes.sql": "7af3deb0184c08ecdcf2edbe5699552ea6d6da55ea4f7dc3fd527268b4bc5a30",
     "supabase/migrations/20261011175300_audit_action_source_index.sql": "2a18712c52c7a97cabf7725f5d669dc6e81c9baa8ee9227d5694064a42674bf5",
-    "supabase/migrations/20261012020000_beta_owner_links.sql": "ea0ec0f9c03c2e5db7ed1930ec89096122bcde0ccf374cded099307d665b3a7e"
+    "supabase/migrations/20261012020000_beta_owner_links.sql": "ea0ec0f9c03c2e5db7ed1930ec89096122bcde0ccf374cded099307d665b3a7e",
+    "selfia-app/tests/money-budget.test.mjs": "678943dbe201ece3c17f6f37359f18fbf9e8bd991a3a10d91ee328ecb4033405",
+    "supabase/functions/_shared/ai-pricing.ts": "e595014352fa757da1c6967f8b0cafc9fd700e2f184e32318e963a9ae8a7b2e1",
+    "supabase/migrations/20261012120000_beta_money_budget.sql": "c547ca687c655908094adaab98beb55072f136fc545aba5b36e9917f03706d70",
+    "supabase/tests/ai-money.test.ts": "b612e23947efdd51ef0c945fc4a4638f76b29f8d7d001ea7fcfd7809457efd89"
   },
   "edge_functions": [
     {
       "name": "selfia-chat",
-      "version": 14,
+      "version": 15,
       "status": "ACTIVE",
       "verify_jwt": false,
-      "ezbr_sha256": "ce0a35c31ec1acfe1dff41b9cf37666aedb69ca9f173f2fa3c48d0eaec8b8f81"
+      "ezbr_sha256": "8794224e8bcdfc3d16920737bf8db14617387e7d966771d2c03c77100df2df0f"
     },
     {
       "name": "selfia-context",
@@ -89,24 +96,24 @@
     },
     {
       "name": "selfia-daily",
-      "version": 9,
+      "version": 10,
       "status": "ACTIVE",
       "verify_jwt": false,
-      "ezbr_sha256": "b86c444b5542621f4c4e2c75c4bc7d46536582afef77bb1a6ccae91dfd505285"
+      "ezbr_sha256": "b75f7c1c5e51c981fe67669e99b6a0b0abce3e0eb832a6e25b513c97c3be0fcd"
     },
     {
       "name": "selfia-motivation",
-      "version": 9,
+      "version": 10,
       "status": "ACTIVE",
       "verify_jwt": false,
-      "ezbr_sha256": "2a1bae817cc5901981131dce4b522fb68a96390b5815aff58f09bf90b3fd8d43"
+      "ezbr_sha256": "bca38834290e8998d8783d1fbd210017a707641fc6945bf826df2b18d99a547e"
     },
     {
       "name": "selfia-discover",
-      "version": 9,
+      "version": 10,
       "status": "ACTIVE",
       "verify_jwt": false,
-      "ezbr_sha256": "d36b9592cbaceaa624630578ebb6a144e0a5606d555930fc727e18bb274b7e22"
+      "ezbr_sha256": "f87e7a5ae88c796d9ed0aa81c13cd743ac880cf9a9d7af49741201e249138654"
     },
     {
       "name": "selfia-onboarding",
@@ -164,16 +171,25 @@
     {
       "version": "20261012102426",
       "name": "beta_owner_links"
+    },
+    {
+      "version": "20261012111144",
+      "name": "beta_money_budget"
     }
   ],
   "pending_edge_deployments": [],
-  "source_alignment_note": "Hosted chat v14 unchanged; beta_owner_links already applied to test. Frontend now fixes F02 reopen drafts; independent revalidation pending.",
+  "source_alignment_note": "Test chat v15, daily/motivation/discover v10 deploy the new shared monetary guard; context v9/onboarding v5 unchanged. New frontend monthly-budget explanation included in code_commit. F02 independently passed on predecessor.",
   "last_updated": "2026-10-12",
   "authorizations": [
     {
       "date": "2026-10-12",
       "scope": "test only; deploy chat repair sending relevant messages, explicit declarations, confirmed memories, situations, goals and actions to OpenAI, excluding withdrawn memories",
       "human_reply": "Sí, autorizo ese envío en pruebas"
+    },
+    {
+      "date": "2026-10-12",
+      "scope": "75 USD monthly IA budget for test beta; no infrastructure purchases; real mailbox shared only with existing Astra test chat for access/authentication-message coordination",
+      "human_reply": "75 US$/mes de IA; Sí, para esa prueba de acceso"
     }
   ]
 }
