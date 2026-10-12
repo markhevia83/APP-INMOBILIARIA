@@ -39,7 +39,7 @@
     "f02_reopen_repair": "PASS local React and independent Astra reopen/reload/empty draft/pause/action/subject; concrete reproduction closed.",
     "money_guard_sql": "PASS deployed test-only transaction: reservation, settlement once, cap denial before capacity; rolled back. service_role reserve/settle also passed with rollback. Concurrency HTTP and invoice reconciliation pending.",
     "security_advisors": "Known leaked-password WARN persists; two RLS-no-policy INFO are intentional deny-all server-only budget tables, client grants revoked. No protections reduced.",
-    "real_email_auth": "Test registration created and confirmation message received in explicitly authorized mailbox; full confirmation/recovery flow pending. Mailbox/credentials omitted from public evidence."
+    "real_email_auth": "Astra real registration, confirmation delivery and login observed; localhost redirect reproduced and corrected in test Site URL/exact redirect allowlist. New recovery mail blocked by email rate limit; password unchanged; full F07 pending. See beta-auth-check-2026-10-12.md."
   },
   "source_sha256_git_blob": {
     "selfia-app/package.json": "b84128f8817d6dc099ef99c09aac856a4d177e39d6f328313d5efcff1551c430",
@@ -191,5 +191,12 @@
       "scope": "75 USD monthly IA budget for test beta; no infrastructure purchases; real mailbox shared only with existing Astra test chat for access/authentication-message coordination",
       "human_reply": "75 US$/mes de IA; Sí, para esa prueba de acceso"
     }
-  ]
+  ],
+  "test_auth_urls": {
+    "site_url": "https://self-ia-mobile-git-selfia-continuity-preview-self-ia.vercel.app",
+    "exact_redirects": [
+      "https://self-ia-mobile-oid9f4y0d-self-ia.vercel.app",
+      "https://self-ia-mobile-git-selfia-continuity-preview-self-ia.vercel.app"
+    ]
+  }
 }
