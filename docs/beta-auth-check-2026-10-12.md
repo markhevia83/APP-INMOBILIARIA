@@ -16,3 +16,13 @@ La solicitud de recuperación quedó bloqueada por `email rate limit exceeded`. 
 Pendientes: nuevo correo de recuperación, destino correcto, pantalla de nueva contraseña, paso humano de cambio, login con contraseña nueva, enlace reutilizado/vencido y aislamiento de sesiones. El registro/inicio de sesión observado no equivale a aprobar toda recuperación.
 
 La explicación anterior de que todo registro requería que el humano introdujera credenciales era demasiado amplia, según corrección de Astra. Las reglas efectivas del navegador sí reservan al humano cambiar una contraseña: entrada, confirmación y envío. No se publican contraseña, token, OTP ni enlaces de un solo uso en este documento.
+
+## Actualización: SMTP guardado, autenticación rechazada
+
+El usuario autorizó explícitamente conectar el buzón empresarial elegido mediante SMTP únicamente en pruebas y almacenar su credencial en Supabase. La introdujo directamente en el panel y confirmó «listo» para guardar/probar. No se leyó ni exportó la credencial, no se cambió la contraseña del buzón ni la de SELF-IA y no se contrataron servicios ni modificó DNS.
+
+Se guardó custom SMTP de IONOS (`smtp.ionos.es`, puerto 465, intervalo por usuario 60 segundos). Tras recargar, el panel mostró servicio activo y credencial almacenada oculta. El remitente y usuario se mantienen fuera de este documento público.
+
+Astra, turno `01a12feb-c103-74b1-b012-47122a12ea71`, hizo un único intento de recuperación autorizado desde la preview estable: `Error sending recovery email`, sin correo nuevo. Consulta acotada de `auth_logs` en pruebas confirmó respuesta del proveedor **535 Authentication credentials invalid**. No es el límite anterior de correo ni evidencia de un fallo TLS. Corregir autenticación antes de otro intento; no reintentar en bucle ni dar este paso por aprobado.
+
+Estado actual: configuración persistida, envío bloqueado por autenticación SMTP, recuperación completa pendiente. El formulario queda al usuario para corregir la credencial del buzón en el campo privado. Solo se repetirán la entrega y el retorno después de corregirla. Ninguna producción se modificó.
