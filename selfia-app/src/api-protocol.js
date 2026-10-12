@@ -1,3 +1,4 @@
+import {URGENT_SUPPORT_MESSAGE} from '../../supabase/functions/_shared/urgent-support.ts';
 const uuid = value => typeof value === 'string' && /^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(value);
 const object = value => value && typeof value === 'object' && !Array.isArray(value);
 const text = value => typeof value === 'string' && value.trim().length > 0;
@@ -32,10 +33,10 @@ export async function readApiResponse(response, path, body = {}) {
   if (!response.ok) {
     const code = typeof data?.error === 'string' ? data.error : data?.error?.code;
     const daily = ['user_daily_limit','global_daily_budget','global_daily_limit'].includes(code);
-    const message = code === 'monthly_budget' ? 'El presupuesto mensual de IA está reservado o agotado. El responsable debe revisar el gasto antes de continuar.' : daily ? 'Se ha alcanzado el límite diario de IA. Se restablece a las 00:00 UTC. Conserva tu texto para continuar después.' : response.status === 429 ? 'Hay demasiadas peticiones. Espera un momento y reintenta.' :
+    const message = code === 'monthly_budget' ? 'El presupuesto mensual de IA está reservado o agotado. El responsable debe revisar el gasto antes de continuar.' : daily ? 'Se ha alcanzado el límite diario de IA. Se restablece a las 00:00 UTC. Conserva tu texto para continuar después.' : code === 'retry_limit' ? 'Esta petición ha agotado sus intentos. Tu borrador se conserva; revisa el estado antes de crear otra petición.' : response.status === 429 ? 'Hay demasiadas peticiones. Espera un momento y reintenta.' :
       response.status >= 500 ? 'SELF-IA no ha podido completar la petición. Reintenta.' :
       object(data) && (data.message || data.error) || 'No se pudo completar la petición.';
-    const error = new Error(message); error.status = response.status; throw error;
+    const error = new Error(message+(path==='selfia-chat'?' '+URGENT_SUPPORT_MESSAGE:'')); error.status = response.status; error.code = code==='retry_limit'?'retry_limit':undefined; throw error;
   }
   let valid = object(data);
   if (path === 'selfia-chat') valid &&= uuid(data.conversation_id) && uuid(data.source_message_id) && text(data.reply) &&

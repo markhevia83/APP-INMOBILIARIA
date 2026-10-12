@@ -28,6 +28,7 @@ export function createChatWorkspace(storage) {
     patch(change) { Object.assign(this.current(),change); persist(); return this.current(); },
     begin(content) {
       const state=this.current(); if (state.busy) return null;
+      if(state.pending?.content===content&&state.pending.terminalReason==='retry_limit')return null;
       if (state.pending?.content !== content) state.pending={content,request_id:crypto.randomUUID()};
       state.busy=true; persist();
       return {key:active,epoch,owner,request:{...state.pending},state:{...state,link:{...state.link}}};
@@ -42,9 +43,9 @@ export function createChatWorkspace(storage) {
       if (state.draft.trim()===ticket.request.content) state.draft='';
       state.pending=null; state.busy=false; persist(); return active===ticket.key;
     },
-    fail(ticket) {
+    fail(ticket,code) {
       if (ticket.epoch!==epoch || ticket.owner!==owner) return false;
-      const state=contexts.get(ticket.key); if (state) state.busy=false; persist(); return active===ticket.key;
+      const state=contexts.get(ticket.key); if (state) {state.busy=false;if(code==='retry_limit'&&state.pending?.request_id===ticket.request.request_id)state.pending.terminalReason='retry_limit';} persist(); return active===ticket.key;
     },
     accepted(messageId,commitmentId) {
       for (const state of contexts.values()) state.messages=state.messages.map(m=>m.turn?.source_message_id===messageId?{...m,accepted:true,commitment_id:commitmentId}:m);

@@ -78,6 +78,19 @@ try{
  });
  page=await context.newPage();const errors=[];page.on('pageerror',e=>{errors.push(e.message);console.log('PAGE ERROR',e.message)});
  await page.goto(base);await page.getByRole('button',{name:'Hablar',exact:true}).click();
+ const crisisDraft='Caso sintético: tengo miedo de hacerme daño ahora mismo';
+ const beforeSafetyTurns=await scalar('select count(*)::int from turn_receipts'),beforeSafetyMemories=await scalar('select count(*)::int from memories');
+ const quotaBlock=route=>route.fulfill({status:429,contentType:'application/json',body:JSON.stringify({error:'global_daily_budget'})});
+ await page.route('**/functions/v1/selfia-chat',quotaBlock);
+ await page.getByPlaceholder('Escribe o háblame…').fill(crisisDraft);await page.getByRole('button',{name:'Enviar',exact:true}).click();
+ await page.getByRole('alert').filter({hasText:'No esperes a que vuelva a estar disponible la IA'}).waitFor();
+ assert.equal(await page.getByPlaceholder('Escribe o háblame…').inputValue(),crisisDraft);
+ await page.locator('.urgentHelp > summary').click();
+ assert.ok(await page.getByText('Antes de cambiar contraseñas',{exact:false}).isVisible());
+ await context.setOffline(true);assert.ok(await page.getByText('SELF-IA no puede contactar con emergencias por ti',{exact:false}).isVisible());await context.setOffline(false);
+ assert.equal(await scalar('select count(*)::int from turn_receipts'),beforeSafetyTurns);assert.equal(await scalar('select count(*)::int from memories'),beforeSafetyMemories);
+ await page.locator('.urgentHelp > summary').click();await page.unroute('**/functions/v1/selfia-chat',quotaBlock);
+
  await page.getByPlaceholder('Escribe o háblame…').fill('Quiero preparar una reunión con mi responsable');
  await page.getByRole('button',{name:'Enviar',exact:true}).click();
  await page.getByRole('button',{name:'Guardar esta acción',exact:true}).click();

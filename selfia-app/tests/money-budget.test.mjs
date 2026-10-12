@@ -55,3 +55,10 @@ test('monthly budget exhaustion preserves a meaningful client error instead of e
 test('daily quota exhaustion explains the UTC reset even when the server message is private or absent',async()=>{
  for(const error of [{code:'global_daily_budget'},'global_daily_budget','user_daily_limit'])await assert.rejects(()=>readApiResponse(new Response(JSON.stringify({error,message:'SYNTHETIC_PRIVATE_DETAIL'}),{status:429}),'selfia-chat'),e=>e.status===429&&e.message.includes('00:00 UTC')&&!e.message.includes('SYNTHETIC_PRIVATE_DETAIL')&&!e.message.includes('un momento'));
 });
+test('an exhausted chat request preserves its draft and terminal refusal across reload without silently creating a fresh retry',async()=>{
+ const {createChatWorkspace}=await import('../src/chat-workspace.js');const values=new Map(),storage={getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)};
+ const w=createChatWorkspace(storage);w.setOwner('synthetic');w.open();w.patch({draft:'Synthetic terminal request'});
+ const ticket=w.begin('Synthetic terminal request');w.fail(ticket,'retry_limit');assert.equal(w.begin('Synthetic terminal request'),null);assert.equal(w.current().draft,'Synthetic terminal request');
+ const reload=createChatWorkspace(storage);reload.setOwner('synthetic');reload.open();assert.equal(reload.begin('Synthetic terminal request'),null);assert.equal(reload.current().draft,'Synthetic terminal request');
+ await assert.rejects(()=>readApiResponse(new Response(JSON.stringify({error:'retry_limit'}),{status:429}),'selfia-chat'),e=>e.code==='retry_limit'&&e.message.includes('agotado sus intentos')&&e.message.includes('No esperes')&&!e.message.includes('un momento'));
+});

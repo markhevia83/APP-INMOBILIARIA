@@ -33,6 +33,7 @@ Deno.test('four real AI handlers hide provider details and malformed output whil
     const response=await handler(new Request('https://selfia-synthetic.invalid',{method:'POST',headers:{authorization:'Bearer synthetic'},body:JSON.stringify({request_id:crypto.randomUUID(),conversation_id:conversation,content:'Caso sintético',city:'Madrid'})}));
     assert.equal(response.status,['budget','daily_budget'].includes(mode)?429:502,endpoint+' '+mode);
     const body=await response.text();assert.ok(!body.includes(canary),endpoint+' must not expose provider details');
+    if(endpoint==='chat'){assert.match(body,/support_message/);assert.match(body,/servicios de emergencia/);assert.match(body,/No esperes/);}
     if(mode==='budget'){assert.match(body,/monthly_budget/);assert.equal(providerCalls,before,'budget denial must precede provider');}
     if(mode==='daily_budget'){assert.match(body,/global_daily_budget/);assert.match(body,/00:00 UTC/);assert.equal(providerCalls,before,'daily quota denial must precede provider');}
    }

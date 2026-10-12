@@ -1,10 +1,11 @@
 import {SELFIA_SAFETY_RULES} from '../_shared/safety-rules.ts';
+import {URGENT_SUPPORT_MESSAGE} from '../_shared/urgent-support.ts';
 import {safeAiError} from '../_shared/ai-errors.ts';
 import {limitedAiFetch} from '../_shared/ai-request.ts';
 import { loadContext } from "../_shared/load-context.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
 const cors={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"authorization, x-client-info, apikey, content-type","Access-Control-Allow-Methods":"POST, OPTIONS"};
-const json=(b:unknown,s=200)=>new Response(JSON.stringify(b),{status:s,headers:{...cors,"content-type":"application/json"}});
+const json=(b:unknown,s=200)=>new Response(JSON.stringify(s>=400?{...(b as Record<string,unknown>),support_message:URGENT_SUPPORT_MESSAGE}:b),{status:s,headers:{...cors,"content-type":"application/json"}});
 const clip=(s:string,n=12000)=>s.length>n?s.slice(0,n):s;
 
 Deno.serve(async(req)=>{
