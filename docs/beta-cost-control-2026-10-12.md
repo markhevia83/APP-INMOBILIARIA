@@ -22,4 +22,10 @@ Fuentes consultadas 12 octubre 2026: https://developers.openai.com/api/docs/pric
 
 ## Evidencia y pendientes
 
-Pruebas SQL locales: reserva/denegación antes de capacidad, liquidación idempotente, coste incierto, vencimiento sin reembolso, permisos de usuario. Pruebas del servidor con proveedor simulado: denegación sin llamada, tier obligatorio, rechazo de modelo/herramienta desconocidos, revisión de precios y timeout conservador. No sustituyen un ensayo HTTP de concurrencia ni la factura real. Estado desplegado y versiones se registran en la evidencia de release.
+Pruebas SQL locales: reserva/denegación antes de capacidad, liquidación idempotente, coste incierto, vencimiento sin reembolso, permisos de usuario, exceso imprevisto y separación del mes anterior. Pruebas del servidor con proveedor simulado: denegación sin llamada, tier obligatorio, rechazo de modelo/herramienta desconocidos, revisión de precios y timeout conservador. 26 Node y 5 Deno PASS; compilación y recorrido React móvil/escritorio PASS.
+
+Guardia activa exclusivamente en test: chat v15; daily/motivation/discover v10. Migración remota `20261012111144_beta_money_budget`. SQL alojado probado con datos sintéticos y ROLLBACK: reserva/denegación antes de capacidad, liquidación idempotente y permisos efectivos de `service_role`. Los dos avisos informativos RLS sin políticas corresponden a estas tablas de presupuesto, intencionadamente inaccesibles al cliente; no se añaden políticas permisivas para ocultar el aviso.
+
+Preview READY `33c0071`, `https://self-ia-mobile-glzduispn-self-ia.vercel.app/`, deployment `dpl_2t5YSYEZqMCfpmjgDzPU25njhSeX`, target preview/null. Bundle descargado: configuración de pruebas y texto de límite monetario presentes. El literal de Supabase de producción sigue apareciendo únicamente como comprobación de protección en el código, no como fallback de configuración.
+
+Astra, turno `01a12fdb-7ae1-7460-af58-78498fe79478`, observó respuesta correcta a una única petición sintética. Metadatos SQL corroboran chat completado, 1697 tokens de entrada y 124 de salida. Esta observación prueba respuesta real con guardia activa, no agotamiento real ni concurrencia HTTP. No se agotó deliberadamente el presupuesto ni se redujeron protecciones. Factura y alertas externas siguen pendientes.

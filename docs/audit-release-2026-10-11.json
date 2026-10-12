@@ -39,7 +39,8 @@
     "f02_reopen_repair": "PASS local React and independent Astra reopen/reload/empty draft/pause/action/subject; concrete reproduction closed.",
     "money_guard_sql": "PASS deployed test-only transaction: reservation, settlement once, cap denial before capacity; rolled back. service_role reserve/settle also passed with rollback. Concurrency HTTP and invoice reconciliation pending.",
     "security_advisors": "Known leaked-password WARN persists; two RLS-no-policy INFO are intentional deny-all server-only budget tables, client grants revoked. No protections reduced.",
-    "real_email_auth": "Astra real registration, confirmation delivery and login observed; localhost redirect reproduced and corrected in test Site URL/exact redirect allowlist. New recovery mail blocked by email rate limit; password unchanged; full F07 pending. See beta-auth-check-2026-10-12.md."
+    "real_email_auth": "Astra real registration, confirmation delivery and login observed; localhost redirect reproduced and corrected in test Site URL/exact redirect allowlist. New recovery mail blocked by email rate limit; password unchanged; full F07 pending. See beta-auth-check-2026-10-12.md.",
+    "money_guard_real_model": "PASS one synthetic chat independently observed by Astra in preview33c0071/chat15, turn01a12fdb-7ae1-7460-af58-78498fe79478; SQL metadata corroborates completed chat1697 input/124 output tokens. No real exhaustion/concurrency/invoice verification."
   },
   "source_sha256_git_blob": {
     "selfia-app/package.json": "b84128f8817d6dc099ef99c09aac856a4d177e39d6f328313d5efcff1551c430",
@@ -198,5 +199,13 @@
       "https://self-ia-mobile-oid9f4y0d-self-ia.vercel.app",
       "https://self-ia-mobile-git-selfia-continuity-preview-self-ia.vercel.app"
     ]
+  },
+  "verified_preview": {
+    "url": "https://self-ia-mobile-glzduispn-self-ia.vercel.app/",
+    "deployment_id": "dpl_2t5YSYEZqMCfpmjgDzPU25njhSeX",
+    "sha": "33c00718312517de8b8d272c4af11c540d266a06",
+    "target": "preview",
+    "state": "READY",
+    "test_backend_bundle_verified": true
   }
 }

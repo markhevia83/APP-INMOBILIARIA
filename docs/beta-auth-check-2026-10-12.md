@@ -11,7 +11,7 @@ Corrección verificada en el panel de **SELF-IA Pruebas**, no en Supabase de pro
 - Sin comodines ni destinos de terceros. El panel mostró guardado correcto y ambas URLs.
 - Un correo anterior mantiene su dirección anterior; hace falta un mensaje nuevo para verificar la reparación completa.
 
-La solicitud de recuperación quedó bloqueada por `email rate limit exceeded`. No se redujo el límite, se desactivó confirmación ni se compró/configuró otro servicio de correo. La contraseña no se ha cambiado. No repetir envíos continuamente: reintentar cuando el servicio permita enviar o preparar un servicio SMTP de la beta con configuración autorizada y probada.
+La solicitud de recuperación quedó bloqueada por `email rate limit exceeded`. El panel SMTP de este proyecto mostró `Enable custom SMTP` desactivado: no hay servicio propio configurado. No se redujo el límite, se desactivó confirmación ni se compró/configuró otro servicio de correo. La contraseña no se ha cambiado. No repetir envíos continuamente: reintentar cuando el servicio permita enviar o preparar un servicio SMTP de la beta con configuración autorizada y probada. Se ha solicitado únicamente el dominio remitente disponible; no claves ni contraseñas.
 
 Pendientes: nuevo correo de recuperación, destino correcto, pantalla de nueva contraseña, paso humano de cambio, login con contraseña nueva, enlace reutilizado/vencido y aislamiento de sesiones. El registro/inicio de sesión observado no equivale a aprobar toda recuperación.
 
