@@ -6,6 +6,20 @@ import {createChatWorkspace,voiceTranscript} from '../src/chat-workspace.js';
 import {readApiResponse,ProtocolError} from '../src/api-protocol.js';
 import {independentProfileItems,eligiblePlanProposals} from '../../supabase/functions/_shared/profile-provenance.ts';
 const uid='10000000-0000-4000-8000-000000000001',other='10000000-0000-4000-8000-000000000002';
+test('prefilled goal, paused goal, action and subject entries preserve edited and intentionally empty drafts on reopen and reload',()=>{
+ for(const link of [{goal_id:'goal'},{goal_id:'paused-goal'},{commitment_id:'action'},{situation_id:'subject'}]){
+  const data=new Map(),storage={getItem:key=>data.get(key),setItem:(key,value)=>data.set(key,value),removeItem:key=>data.delete(key)};
+  const w=createChatWorkspace(storage);w.setOwner('A');
+  assert.equal(w.open('work',link,false,'Initial text').draft,'Initial text');
+  w.patch({draft:'My unsent draft'});w.open('self');
+  assert.equal(w.open('work',link,false,'Replacement text').draft,'My unsent draft');
+  if(link.goal_id||link.commitment_id)assert.equal(w.open('work',{...link,situation_id:'newly-linked-subject'},false,'Replacement text').draft,'My unsent draft');
+  const reload=createChatWorkspace(storage);reload.setOwner('A');
+  assert.equal(reload.open('work',link,false,'Replacement text').draft,'My unsent draft');
+  reload.patch({draft:''});reload.open('self');
+  assert.equal(reload.open('work',link,false,'Replacement text').draft,'');
+ }
+});
 test('scheduling keeps action, objective and subject coherent and rejects foreign or conflicting objectives',async()=>{
  const db=new PGlite();try{
   await db.exec(await readFile(new URL('./baseline.sql',import.meta.url),'utf8'));

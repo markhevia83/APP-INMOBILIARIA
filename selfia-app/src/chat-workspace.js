@@ -1,5 +1,7 @@
 // Requests belong to an account and a context, never to whichever screen is visible later.
 export function createChatWorkspace(storage) {
+  // Goal/action identity stays stable when their subject link is established later.
+  const routeFor=(area,link)=>JSON.stringify([area,link.commitment_id||link.goal_id?null:link.situation_id||null,link.commitment_id?null:link.goal_id||null,link.commitment_id||null]);
   let owner = null, active = '', epoch = 0;
   let contexts = new Map();
   const blank = (area = '', link = {}) => ({area, link, conv:null, messages:[], draft:'', busy:false, pending:null});
@@ -12,12 +14,14 @@ export function createChatWorkspace(storage) {
       if (id === owner) return;
       this.clear(); owner = id;
       try { contexts = new Map(JSON.parse(storage?.getItem('selfia-chat-'+id) || '[]')); } catch { contexts = new Map(); }
+      for(const state of contexts.values())if(state.link.goal_id||state.link.commitment_id||!state.route)state.route=routeFor(state.area,state.link);
     },
     clear() { if (owner) storage?.removeItem('selfia-chat-'+owner); owner=null; contexts.clear(); active=''; epoch++; },
-    open(area='',link={situation_id:null,goal_id:null},fresh=false) {
-      const route=JSON.stringify([area,link.situation_id||null,link.goal_id||null,link.commitment_id||null]);
+    open(area='',link={situation_id:null,goal_id:null},fresh=false,initialDraft='') {
+      const route=routeFor(area,link);
       active=fresh ? route+crypto.randomUUID() : [...contexts].reverse().find(([key,value])=>value.route===route)?.[0]||route;
-      if (!contexts.has(active)) contexts.set(active, {...blank(area,link),route});
+      if (!contexts.has(active)) {contexts.set(active, {...blank(area,link),route,draft:initialDraft});persist();}
+      else {if(link.situation_id||link.goal_id||link.commitment_id)contexts.get(active).link={...link};persist();}
       return contexts.get(active);
     },
     current() { return contexts.get(active); },
