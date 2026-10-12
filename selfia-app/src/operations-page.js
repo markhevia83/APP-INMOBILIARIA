@@ -14,6 +14,7 @@ async function check(drill=false){
   status.textContent=drill?'Prueba de avisos; no es un incidente real.':'Estado actualizado: '+new Date(data.checked_at).toLocaleString('es-ES');
   if(!drill){metrics.replaceChildren();const b=data.budget;const money=x=>(Number(x)/1000000).toFixed(2)+' US$';text(metrics,'p','Mes: '+data.month+' · Límite: '+money(b.cap_microusd));text(metrics,'p','Estimado liquidado: '+money(b.spent_microusd)+' · Reservado: '+money(b.held_microusd));text(metrics,'p','Últimos 20 minutos: '+data.recent.requests+' solicitudes · '+data.recent.failures+' fallos');}
   alerts.replaceChildren();text(alerts,'h2',drill?'Avisos de prueba':'Avisos');
+  if(!drill&&data.daily_capacity){const d=data.daily_capacity;text(metrics,'p','Cupo diario: '+d.units_used+' / '+d.units_limit+' unidades de capacidad · '+d.calls_used+' / '+d.calls_limit+' peticiones. Se restablece a las 00:00 UTC.');}
   if(!data.alerts.length)text(alerts,'p','No hay avisos activos en esta comprobación.');
   for(const a of data.alerts){const e=text(alerts,'p',a.message);e.setAttribute('role','alert');e.style.fontWeight=a.level==='urgent'?'700':'400';}
  }catch(e){status.textContent=e.message;metrics.replaceChildren();alerts.replaceChildren();}finally{busy=false;}

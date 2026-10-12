@@ -8,6 +8,7 @@ Deno.test('operations thresholds catch budget, failures, latency and uncertain s
  assert.ok(operationAlerts({...sample,budget:{...sample.budget,spent_microusd:75000000}},Date.parse('2026-10-12')).some(x=>x.code==='budget_blocked'));
  assert.ok(operationAlerts(sample,Date.parse('2026-11-11')).some(x=>x.code==='pricing_review'));
  assert.throws(()=>operationAlerts({...sample,budget:{...sample.budget,cap_microusd:100}}));
+ assert.ok(operationAlerts({...sample,daily_capacity:{units_used:974,units_limit:1000,calls_used:52,calls_limit:200}}).some(x=>x.code==='daily_capacity'),'daily limit can deny requests even with monthly money remaining');
 });
 Deno.test('operations endpoint validates identity, denies other users before admin access and clearly marks drills',async()=>{
  const oldServe=Deno.serve,oldFetch=globalThis.fetch,names=['SUPABASE_URL','SUPABASE_ANON_KEY','SUPABASE_SERVICE_ROLE_KEY','SELFIA_OPERATOR_USER_ID'];
