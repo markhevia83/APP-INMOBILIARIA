@@ -31,7 +31,7 @@ Fuente: `auditoria-selfia-2026-10-09.txt`, SHA-256 `e9c3658e6f3cf04ed0669ad058a4
 
 También se corrigió la coherencia entre objetivo, situación y compromiso al programar: objetivo ajeno/incompatible rechazado; enlace nuevo autorizado sincronizado con la acción y su situación.
 
-## Verificaciones ejecutadas
+## Verificaciones ejecutadas (histórico; actualización vigente abajo)
 
 1. `pnpm test`: **20 pruebas**, cero fallos. PostgreSQL/PGlite, RLS por rol, atomicidad, idempotencia, retirada de memoria, correcciones, paginación de asuntos antiguos, mapa y evolución sin contar dos veces.
 2. `pnpm test:e2e`: aplicación React real en 390×844 y 1366×900, SQL/RLS real en PGlite; **Auth y modelo simulados**, cero peticiones externas. Acción→agenda→resultado parcial→aprendizaje→corrección→conversación→retirada; planes estructurados; respuesta tardía; cuerpo roto tras commit; recarga; A/B; onboarding; exportación y solicitud de eliminación pendiente.
@@ -41,7 +41,7 @@ También se corrigió la coherencia entre objetivo, situación y compromiso al p
 6. Build pasa. Vite actualizado a 7.3.7 y su esbuild a 0.28.1; instalación bloqueada por lockfile; scripts permitidos por versión exacta.
 7. Escaneo de patrones de secretos: 106 blobs históricos y 54 archivos actuales, más artefactos compilados: cero coincidencias de claves privadas conocidas. **No prueba ausencia de secretos**; excluye fixtures ignorados, configuración externa y logs de proveedores.
 
-Las pruebas actuales por HTTP contra el dominio público de Supabase no llegaron al acceso: timeout de conexión y resolución de host fallida en este entorno. El conector administrativo sí funciona. No se atribuye este bloqueo a la aplicación ni se marca como una prueba superada. No se cambió DNS, firewall ni protecciones del equipo.
+Las pruebas del 11 de octubre por HTTP contra el dominio público de Supabase no llegaron al acceso: timeout de conexión y resolución de host fallida en este entorno. El conector administrativo sí funciona. No se atribuye este bloqueo a la aplicación ni se marca como una prueba superada. No se cambió DNS, firewall ni protecciones del equipo.
 
 Astra abrió la preview 6559f57 con su navegador e inició sesión con B; el bloqueo de conexión no aparece allí. Confirmó F09 en dos conversaciones reales y el rechazo de otra fecha de F03 en dos vistas, con repetición exacta sin duplicar. Detectó un aviso técnico de programación; el frontend nuevo ofrece la explicación y cómo mover la acción. Su prueba REST por comandos también quedó bloqueada (conexión rechazada antes del servicio); entrada por navegador no certifica REST/JWT. La revisión quedó esperando una aprobación en ese chat; no se suplanta la decisión del usuario. No hay informe final de cierre independiente para esta entrega.
 
@@ -56,7 +56,11 @@ El despliegue aislado 6559f57 (`dpl_6Wf96NFhhSTZuxLgFe51eFRURY4E`) estaba READY;
 - Buscador de planes: solo ciudad y tipo de búsqueda explícitos; sin leer ni enviar perfil, memoria, asuntos o feedback. UI informa de OpenAI y consulta web; handler comprueba minimización.
 - Registro operativo sin texto íntimo: UUID, endpoint, modelo, tokens, llamadas web, duración y resultado; límites de concurrencia/reintento/cuota en servidor antes de llamar al proveedor.
 - Límites iniciales: 2 solicitudes simultáneas por cuenta, 10 globales; 40 intentos diarios por cuenta, 200 globales; 1.000 unidades reservadas al día, máximo 200 por petición, máximo 3 intentos de UUID. Unidades conservadoras de capacidad, **no euros ni techo financiero garantizado**. Guardia monetaria conservadora de 75 US$/mes activa en pruebas, ver beta-cost-control-2026-10-12.md. Faltan contraste de factura/proveedor, alertas entregadas, ensayos de abuso/tráfico y ajuste de límites.
-- La clave de pruebas figura históricamente con caducidad **13-10-2026**: verificar vigencia y rotación con el responsable; no se leyó ni se publica su valor.
+- Vigencia confirmada el 12 de octubre con permiso humano para metadatos: SELF-IA Pruebas activa, caduca **13-10-2026**. Renovación pendiente; no se reveló ni copió el valor.
+
+## Actualización vigente del 12 de octubre
+
+Ver [beta-verification-2026-10-12.md](beta-verification-2026-10-12.md): 28 pruebas locales, navegador móvil/escritorio, aislamiento HTTP de las 22 tablas pobladas, seis guards de acceso y ciclo completo con modelo real superados. Restauración sintética y cascadas de supresión verificadas. Estas evidencias sustituyen el bloqueo HTTP histórico; no cierran SMTP, supresión integral, seguridad semántica ni operación del proveedor.
 
 ## Pendientes completos antes de beta externa
 
@@ -71,7 +75,7 @@ Ampliación del 12-10-2026: suite de aislamiento con fixtures completos de las 2
 | R01-MODEL | P1 | Corrección/retirada seguida de recomendaciones, resumen, paráfrasis y nuevas declaraciones independientes en varios turnos con modelo real; conservar hechos independientes. |
 | R02-VOLUME | P2 | Asuntos/objetivos/acciones fuera de páginas recientes recuperados; seleccionar acción concreta ante contexto grande; validar carga y límites con cuentas voluminosas. |
 | R03-HTTP | P1 | Todas las tablas por REST, lectura/escritura/vínculos A/B y anon; seis funciones con JWT válido/inválido/caducado, manipulación de IDs y prompt injection. |
-| R04-CONCURRENT | P1 | Dos dispositivos/sesiones, pulsaciones simultáneas, cortes antes/después del commit, conflictos de versión y reintento sin duplicados. Harness preparado; ejecución HTTP pendiente. |
+| R04-CONCURRENT | P1 | Dos dispositivos/sesiones, pulsaciones simultáneas, cortes antes/después del commit, conflictos de versión y reintento sin duplicados. HTTP real A/A2 con creación simultánea y cierre local ya pasa; dispositivos físicos y cortes reales pendientes. |
 | R05-SECRETS | P1 | Revisar configuración/logs/artefactos externos e historial accesible; rotar una credencial si hay evidencia de exposición, sin publicar valores. |
 | PRIVACY | Lanzamiento | Información de IA/proveedores, finalidad/base jurídica, categorías sensibles, conservación, ejercicio efectivo de derechos y revisión profesional proporcional/EIPD si corresponde. Documento técnico no certifica cumplimiento. |
 | ERASURE | Lanzamiento | Tramitación segura de cola, supresión sintética completa y política de copias/retención verificada; no borrar datos reales durante auditoría. |

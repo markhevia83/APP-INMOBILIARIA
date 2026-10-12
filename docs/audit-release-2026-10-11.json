@@ -2,7 +2,7 @@
   "date": "2026-10-11",
   "status": "internal_candidate_not_approved_for_external_beta",
   "repository": "markhevia83/APP-INMOBILIARIA",
-  "code_commit": "a5df0f7c7507f8cebb6c3fb56f089574703f0c97",
+  "code_commit": "62deab880184f7c7831922cdfe0a04a81e8093d5",
   "release_commit_note": "The containing Git commit may add documentation only; verify its SHA through Vercel gitSource/meta and compare source hashes to code_commit.",
   "source_branch": "selfia-audit-p0-onboarding",
   "preview_branch": "selfia-continuity-preview",
@@ -13,12 +13,12 @@
   "feature_limits": {
     "voice": "disabled unless explicitly verified and enabled",
     "timed_venue_or_event_plans": "excluded",
-    "erasure": "pending request only; no deletion",
+    "erasure": "User requests remain pending; server-only preflight/cascades repaired in test; operator prototype strictly disposable synthetic accounts only, not completed fulfilment.",
     "ai_budget": "75 USD/calendar month UTC, conservative app-only reservation guard active in test; invoice cap and delivered alerts unverified; pricing review required before 2026-11-11"
   },
   "checks": {
     "local_node_tests": {
-      "passed": 26,
+      "passed": 28,
       "failed": 0
     },
     "local_react_browser": "passed; mobile+desktop; real PGlite SQL/RLS; synthetic Auth/model; no external requests",
@@ -28,7 +28,7 @@
     "dependency_audit": "zero known findings",
     "hosted_sql": "passed test-only synthetic transaction; rolled back",
     "rls_public_tables": 25,
-    "real_auth_http_concurrency_model": "Browser real login/logout/model observed; direct REST/JWT commands blocked before service; no two-device or actual network-cut proof.",
+    "real_auth_http_concurrency_model": "PASS real Auth sessions A/A2, simultaneous idempotent agenda writes, local logout preserving A2/B; all 22 populated owner tables REST foreign reads/updates/spoof INSERT and anonymous writes; six anonymous/invalid-token Edge guards. Signed expired JWT, foreign REST DELETE, physical devices/network cuts remain pending.",
     "external_beta": "not approved; see remediation checklist",
     "deno_chat_provenance": "passed on local corrected handler; synthetic backend/model; keeps independent declaration and excludes withdrawn/legacy facts",
     "independent_browser": "Astra F02 PASS on 0856aec/chat v14, turn 01a12fb7-12bb-7810-a9c9-5957a11d3b89; previous F01/F03/F09 observations retained. No beta approval.",
@@ -40,18 +40,28 @@
     "money_guard_sql": "PASS deployed test-only transaction: reservation, settlement once, cap denial before capacity; rolled back. service_role reserve/settle also passed with rollback. Concurrency HTTP and invoice reconciliation pending.",
     "security_advisors": "Known leaked-password WARN persists; two RLS-no-policy INFO are intentional deny-all server-only budget tables, client grants revoked. No protections reduced.",
     "real_email_auth": "Registration, initial confirmation delivery and login previously observed. Test redirect repaired. Explicitly authorized custom SMTP saved and reload verified, but one recovery attempt failed; test auth logs confirm provider535 Authentication credentials invalid. No password changed. F07 remains blocked pending secure SMTP credential correction and full recovery; see beta-auth-check-2026-10-12.md.",
-    "money_guard_real_model": "PASS one synthetic chat independently observed by Astra in preview33c0071/chat15, turn01a12fdb-7ae1-7460-af58-78498fe79478; SQL metadata corroborates completed chat1697 input/124 output tokens. No real exhaustion/concurrency/invoice verification."
+    "money_guard_real_model": "PASS one synthetic chat independently observed by Astra in preview33c0071/chat15, turn01a12fdb-7ae1-7460-af58-78498fe79478; SQL metadata corroborates completed chat1697 input/124 output tokens. No real exhaustion/concurrency/invoice verification.",
+    "live_model_cycle": "PASS full real situation/action/agenda/partial outcome/learning/corrected memory/adapted chat/withdrawal/later chat; structured daily plans and foreign context rejection. Narrow synthetic semantic coverage.",
+    "restore_drill": "PASS isolated synthetic PGlite dump/load, all 25 table snapshots equal, owner isolation, withdrawal/correction, idempotency and monetary reservations preserved. Provider recovery/whole release rollback pending.",
+    "erasure": "PASS local all-22-table cascade, B unchanged and money preserved; hosted new disposable synthetic account preflight/cascade inside rolled-back transaction. Auth Admin operator prototype not yet executed; storage/session/provider/backup retention pending.",
+    "openai_test_key_validity": {
+      "name": "SELF-IA Pruebas",
+      "status": "Active",
+      "expires": "2026-10-13",
+      "verified": "2026-10-12",
+      "scope": "Human-authorized UI metadata only; no revealed/copied/modified secret; renewal pending"
+    }
   },
   "source_sha256_git_blob": {
-    "selfia-app/package.json": "b84128f8817d6dc099ef99c09aac856a4d177e39d6f328313d5efcff1551c430",
+    "selfia-app/package.json": "b9ba926e683601b9ff3a04448f68fcf538bac3636dae154ceb0a234963fba9a5",
     "selfia-app/pnpm-lock.yaml": "25f451a02e203864aed3105ae88094c9a7997242b4548d96a9387114120f76e4",
     "selfia-app/pnpm-workspace.yaml": "6ef0ac8a07895b4ffcc207322095ce428bc1153ae8bd29a3694dce2d0e5ac43d",
     "selfia-app/src/ChatText.jsx": "4722cc2cea9591d56ea13e637e244a501b9e5bbe7d50445391c668ece1e3f5ec",
     "selfia-app/src/ContinuityPanels.jsx": "52bb79a430a7666994ed35d5cd5e566ec01b449517fa5b9004cd4c4c078863f8",
-    "selfia-app/src/api-protocol.js": "091ce87f080f31c476c94808501962bba823be97126327f09de7c2cee0cff882",
+    "selfia-app/src/api-protocol.js": "91252c89e88dd779cc0cf6fbc9def0021fd96a1283022f73dc0ff54debe7d1a8",
     "selfia-app/src/chat-workspace.js": "27c2b27c29e72af39925a8a23be3dbe7664a812b2117ef89a2324ab809f6a693",
     "selfia-app/src/continuity.js": "da08dee4585b00e77014302bea9b1872041a5d0c9b003c05a082c1d6f36d2054",
-    "selfia-app/src/main.jsx": "17536dd7c1d246dd5c241cacff2f1601993475fe23d3853f534a7b3b2f456aa3",
+    "selfia-app/src/main.jsx": "283b44537ec36badf65ffffd39b854fa9fd57974c4898a3698e06a5b54a5a3f9",
     "selfia-app/src/styles.css": "f2ce733a3f496bc35810e409b97d68aa5c76e90deff8d9b80cc9a72f2021b871",
     "supabase/functions/_shared/ai-request.ts": "e3a63804a5b0a85d60498bb29470c91d363199fcd00c037d42790366049c33a6",
     "supabase/functions/_shared/continuity.ts": "51306d6f333ae466ac3ab49c885b8165f7dfe611ecc80b1e8999f2f8522a8a6b",
@@ -78,7 +88,12 @@
     "selfia-app/tests/money-budget.test.mjs": "678943dbe201ece3c17f6f37359f18fbf9e8bd991a3a10d91ee328ecb4033405",
     "supabase/functions/_shared/ai-pricing.ts": "e595014352fa757da1c6967f8b0cafc9fd700e2f184e32318e963a9ae8a7b2e1",
     "supabase/migrations/20261012120000_beta_money_budget.sql": "c547ca687c655908094adaab98beb55072f136fc545aba5b36e9917f03706d70",
-    "supabase/tests/ai-money.test.ts": "b612e23947efdd51ef0c945fc4a4638f76b29f8d7d001ea7fcfd7809457efd89"
+    "supabase/tests/ai-money.test.ts": "b612e23947efdd51ef0c945fc4a4638f76b29f8d7d001ea7fcfd7809457efd89",
+    "selfia-app/scripts/test-erasure.mjs": "a052345a1295f31360b56611aaf1263da4d27d5b2bd2c6a137946d1ded7dd453",
+    "selfia-app/tests/cloud-integrity-cycle.mjs": "b813feb8a670fa6607f82057e3b7984c9b406510628c30fb5552219723c06d2a",
+    "selfia-app/tests/erasure.test.mjs": "1d9d94b3b64032998520e16b9d7d81a49f462fdd52e9aa7ad8d8595a8370934d",
+    "selfia-app/tests/restore-drill.test.mjs": "7b846767ae0aea03128b1a5dfb8c188c5699dc66022b94af6a4b10026ec63aca",
+    "supabase/migrations/20261012170045_beta_erasure_cascade.sql": "8f61e93a8e42c7865931ff5265e960e2f045abc16337b8aea87c74f4a406d654"
   },
   "edge_functions": [
     {
@@ -176,10 +191,14 @@
     {
       "version": "20261012111144",
       "name": "beta_money_budget"
+    },
+    {
+      "version": "20261012170608",
+      "name": "beta_erasure_cascade"
     }
   ],
   "pending_edge_deployments": [],
-  "source_alignment_note": "Test chat v15, daily/motivation/discover v10 deploy the new shared monetary guard; context v9/onboarding v5 unchanged. New frontend monthly-budget explanation included in code_commit. F02 independently passed on predecessor.",
+  "source_alignment_note": "Edges unchanged: chat15, daily/motivation/discover10, context9/onboarding5. Frontend auth errors/redirect and test erasure schema repaired; see beta-verification-2026-10-12.md. Preview metadata must match this code commit or a documentation-only descendant.",
   "last_updated": "2026-10-12",
   "authorizations": [
     {
@@ -206,6 +225,7 @@
     "sha": "33c00718312517de8b8d272c4af11c540d266a06",
     "target": "preview",
     "state": "READY",
-    "test_backend_bundle_verified": true
+    "test_backend_bundle_verified": true,
+    "superseded_by_pending_code_commit": "62deab880184f7c7831922cdfe0a04a81e8093d5"
   }
 }
