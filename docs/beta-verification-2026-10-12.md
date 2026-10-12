@@ -4,7 +4,7 @@ Estado: candidato interno. Beta externa todavía no aprobada. Solo ramas seguras
 
 ## Evidencia ejecutada
 
-- 28 pruebas locales superadas, build y ciclo React móvil/escritorio superados.
+- 32 pruebas locales superadas, build y ciclo React móvil/escritorio superados.
 - Acceso HTTP real recuperado: dos sesiones de A crean simultáneamente el mismo compromiso sin duplicarlo; reutilizar el UUID con otro contenido queda rechazado. Cerrar una sesión local conserva la otra y la cuenta B.
 - REST/RLS real: las 22 tablas con propietario están pobladas y verificadas. B no lee ni actualiza filas de A, no inserta usando el propietario A; anónimos no leen contenido ni insertan. Las dos tablas de presupuesto del servidor permanecen privadas. SELECT anónimo puede responder 200 con lista vacía: eso no es una fuga.
 - Seis funciones desplegadas rechazan solicitudes anónimas y tokens inválidos antes del modelo.
@@ -29,7 +29,7 @@ El 12 de octubre se consultó el panel de OpenAI con autorización humana limita
 
 ## Cuatro bloques que todavía impiden abrir la beta
 
-1. **Acceso real:** SMTP debe entregar confirmación y recuperación; comprobar contraseña nueva y enlaces vencidos/reutilizados. El rechazo 535 anterior sigue abierto; no se atribuye a escribir la contraseña del formulario. No volver a enviar correos por un canal alternativo para eludir una aprobación bloqueada.
+1. **Acceso real:** Gmail entrega recuperación, cambio de contraseña/entrada y rechazo de enlace consumido pasan. El rechazo IONOS535 anterior quedó sustituido por el proveedor aprobado. Registro/confirmación y entrada real nuevos con Gmail ya pasan; caducidad temporal de enlace no usado sigue pendiente.
 2. **Seguridad y comportamiento:** ampliar JWT firmado caducado, manipulación/inyección, volumen, dos dispositivos y cortes reales de red. Batería supervisada de crisis, abuso, dependencia e ideas delirantes; acceso adulto por invitación y revisión independiente.
 3. **Privacidad efectiva:** completar supresión vía Auth Admin en cuenta desechable, archivos, copias/proveedores/retención; identificar responsable, soporte e información de privacidad antes de aceptar personas reales. No inventar datos legales.
 4. **Operación:** renovar la clave que caduca, comprobar alertas entregadas, contraste del límite conservador de 75 USD con facturación, restauración/reversión conjunta del proveedor y política de contraseñas filtradas en plan compatible sin contratar planes automáticamente.
@@ -43,3 +43,11 @@ REST real de las 22 tablas: B no puede borrar una fila sintética de A; comparac
 Fallo nuevo reproducido: el chat recibía JSON null y devolvía HTTP500. Chat/daily/motivation/discover ahora rechazan JSON inválido y valores que no sean objetos con HTTP400 después de validar la identidad y antes de acceder a datos/modelo. Onboarding ya rechazaba esos valores. 25 peticiones HTTP autenticadas verificadas, sin nuevas filas en ai_usage, conversaciones, mensajes ni recibos; seis pruebas Deno pasan. El ciclo cloud y una respuesta del modelo real pasan tras el despliegue.
 
 Revisión independiente Astra de rb27puzf8, turno01a13124-d7e6-75c3-a086-4c83f45d828b: acceso/recarga, borradores, preferencias independientes sin recuerdos retirados y evolución pasan sin regresiones observadas. No probó SMTP en ese turno ni aprobó beta.
+
+## Cierre actualizado de esta ronda
+
+El estado vigente y los límites de cada prueba están en [beta-closure-2026-10-12.md](beta-closure-2026-10-12.md). Auth Admin ya se ha ejecutado en una cuenta nueva desechable con las 22 tablas pobladas; identidad antigua rechazada y B idéntica. Panel privado agregado autorizado y observado, responsable/país/contacto publicados, 32 pruebas Node y 10 Deno pasan. Las afirmaciones históricas anteriores no certifican cierre externo de beta.
+
+Segunda revisión independiente: ayuda urgente local y rechazo terminal de reintentos reparados; 32 pruebas Node pasan. Daily16/motivation16 incluyen regla de seguridad tecnológica; despliegue nuevo de chat bloqueado por errores internos, chat20 sigue anterior. Consultar manifiesto y beta-closure antes de declarar reparaciones activas.
+
+Reparación posterior del onboarding terminal en fc6b766; full32 Node pasa tras corregir el fixture de reloj en b62a14f. Registro nuevo, confirmación/entrada y link consumido por Gmail pasan; no caducidad temporal.
