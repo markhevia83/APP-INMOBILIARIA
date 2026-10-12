@@ -30,8 +30,16 @@ El 12 de octubre se consultó el panel de OpenAI con autorización humana limita
 ## Cuatro bloques que todavía impiden abrir la beta
 
 1. **Acceso real:** SMTP debe entregar confirmación y recuperación; comprobar contraseña nueva y enlaces vencidos/reutilizados. El rechazo 535 anterior sigue abierto; no se atribuye a escribir la contraseña del formulario. No volver a enviar correos por un canal alternativo para eludir una aprobación bloqueada.
-2. **Seguridad y comportamiento:** ampliar JWT firmado caducado, DELETE ajeno por REST, manipulación/inyección, volumen, dos dispositivos y cortes reales de red. Batería supervisada de crisis, abuso, dependencia e ideas delirantes; acceso adulto por invitación y revisión independiente.
+2. **Seguridad y comportamiento:** ampliar JWT firmado caducado, manipulación/inyección, volumen, dos dispositivos y cortes reales de red. Batería supervisada de crisis, abuso, dependencia e ideas delirantes; acceso adulto por invitación y revisión independiente.
 3. **Privacidad efectiva:** completar supresión vía Auth Admin en cuenta desechable, archivos, copias/proveedores/retención; identificar responsable, soporte e información de privacidad antes de aceptar personas reales. No inventar datos legales.
 4. **Operación:** renovar la clave que caduca, comprobar alertas entregadas, contraste del límite conservador de 75 USD con facturación, restauración/reversión conjunta del proveedor y política de contraseñas filtradas en plan compatible sin contratar planes automáticamente.
 
 Estética, voz y planes de recintos con horarios no bloquean esta reparación: estética queda para el final; voz y esos planes siguen excluidos. No se afirma que se hayan descubierto todos los errores.
+
+## Segunda ampliación: DELETE y entradas inválidas
+
+REST real de las 22 tablas: B no puede borrar una fila sintética de A; comparación posterior confirma que cada fila original permanece idéntica. Fixtures obligatoriamente completos. La primera ejecución de la comprobación confundió tablas con clave compuesta con una fila única; se corrigió el filtro a request_id y se repitió con éxito, sin cambios en permisos.
+
+Fallo nuevo reproducido: el chat recibía JSON null y devolvía HTTP500. Chat/daily/motivation/discover ahora rechazan JSON inválido y valores que no sean objetos con HTTP400 después de validar la identidad y antes de acceder a datos/modelo. Onboarding ya rechazaba esos valores. 25 peticiones HTTP autenticadas verificadas, sin nuevas filas en ai_usage, conversaciones, mensajes ni recibos; seis pruebas Deno pasan. El ciclo cloud y una respuesta del modelo real pasan tras el despliegue.
+
+Revisión independiente Astra de rb27puzf8, turno01a13124-d7e6-75c3-a086-4c83f45d828b: acceso/recarga, borradores, preferencias independientes sin recuerdos retirados y evolución pasan sin regresiones observadas. No probó SMTP en ese turno ni aprobó beta.

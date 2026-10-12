@@ -28,3 +28,9 @@ Astra, turno `01a12feb-c103-74b1-b012-47122a12ea71`, hizo un único intento de r
 Estado actual: configuración persistida, envío bloqueado por autenticación SMTP, recuperación completa pendiente. El formulario queda al usuario para corregir la credencial del buzón en el campo privado. Solo se repetirán la entrega y el retorno después de corregirla. Ninguna producción se modificó.
 
 Segundo intento después de que el usuario confirmó guardar la credencial corregida: panel recargado con custom SMTP activo y Save deshabilitado. Astra, turno `01a12ff5-d70b-7290-b431-f0e62094ddec`, volvió a observar `Error sending recovery email`, sin mensaje nuevo. Consulta de `auth_logs` limitada al intervalo iniciado el 12 octubre a las 11:53:23 UTC confirmó de nuevo **535 Authentication credentials invalid**. La causa no se da por resuelta. No se seguirán enviando solicitudes iguales: pendiente comprobar si el acceso al buzón funciona en Webmail de IONOS o si corresponde a otro tipo de cuenta. No se cambia su contraseña ni se solicitan secretos por chat.
+
+## Contraste con el otro chat
+
+El turno de Astra01a1311b-04e6-7df3-8236-5148c03f26d9 creó y verificó una cuenta técnica sin buzón para que el usuario pueda seguir probando. Esto resuelve el acceso de esa cuenta, no SMTP ni recuperación. Credenciales omitidas del repositorio. Consulta limitada de logs entre16:40 y17:30UTC devuelve tres registros con535; no equivale necesariamente a tres intentos independientes. Host/puerto actuales coinciden con la documentación IONOS: smtp.ionos.es:465.
+
+El usuario indicó haber cambiado la contraseña del buzón y escrito la nueva en Supabase. Se solicitó que complete Guardar; la herramienta de navegador reserva al humano entrada, confirmación y envío al sustituir una credencial. No se imprime ni guarda la contraseña compartida. Entrega/recuperación aún sin verificar con esa última corrección.
