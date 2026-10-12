@@ -60,6 +60,8 @@ El despliegue aislado 6559f57 (`dpl_6Wf96NFhhSTZuxLgFe51eFRURY4E`) estaba READY;
 
 ## Pendientes completos antes de beta externa
 
+Ampliación del 12-10-2026: suite de aislamiento con fixtures completos de las 22 tablas con propietario, lectura/escritura/borrado ajenos, inserción con propietario falsificado y acceso anónimo; configuración del cerebro inaccesible al cliente. Se detectaron dos validaciones ausentes: `profile_items.source_message_id` y `onboarding_sessions.conversation_id` admitían referencias de otra cuenta. No se observó lectura de contenido ajeno en esta prueba. Ambos casos se reprodujeron en Supabase de pruebas dentro de transacciones revertidas; la migración `beta_owner_links` incorpora los mismos controles de propietario que el resto del ciclo. Insertar/vincular entre cuentas queda rechazado; registros independientes legítimos siguen admitidos. Se conserva toda fila anterior. La suite SQL local y los casos remotos pasan; esto no reemplaza REST/JWT ni la prueba independiente.
+
 | ID | Prioridad | Condición verificable para cerrar |
 |---|---|---|
 | AUTH-REAL | P1 | Registro con confirmación, correo de recuperación, redirect exacto, contraseña nueva, links vencido/reutilizado y dos sesiones reales; F07. |
