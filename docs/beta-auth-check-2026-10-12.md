@@ -48,3 +48,11 @@ Host465 y formulario SMTP activo/persistido se verificaron; el panel oculta usua
 El usuario inició sesión en IONOS. Se abrió Correo y se filtró específicamente por el dominio elegido: el panel muestra **No existe ninguna dirección de correo electrónico**. No hay un buzón configurado bajo ese dominio en el portafolio mostrado; la contraseña aportada no permite autenticar un remitente inexistente. No se modificó ni creó ninguna cuenta, contrato, credencial o registro DNS. El panel contiene otros productos de correo disponibles, pero no se usan como remitentes sin elegir la dirección exacta y autorizar la conexión.
 
 Pendiente elección del usuario: usar un buzón existente con su dirección exacta, o preparar un buzón de SELF-IA únicamente si está incluido sin coste, revisando antes disponibilidad y efectos de configuración. No se compran planes automáticamente ni se atribuye a código de SELF-IA la ausencia de ese buzón. Entrega/recuperación seguirán pendientes hasta verificar el remitente nuevo.
+
+## Remitente alternativo elegido: Gmail
+
+El usuario eligió su Gmail existente; la dirección personal se omite del repositorio. Borrador preparado en Supabase de pruebas: host smtp.gmail.com, puerto465, nombreSELF-IA e identidad del remitente elegido; no se guardó ni se tocó la contraseña almacenada. No enviar mientras permanezca la credencial del proveedor anterior.
+
+Google requiere verificación en dos pasos para una contraseña de aplicación: [documentación oficial](https://support.google.com/accounts/answer/185833?hl=es). Generación y entrada de la nueva credencial reservadas al humano; no se leerá ni copiará su valor. Conexión/almacenamiento en Supabase pendientes de autorización específica para el nuevo Gmail. El panel de Supabase advierte que un proveedor de correo personal puede afectar a la entrega transaccional; no se certifica adecuación para lanzamiento por haber preparado estos campos.
+
+Antes de declarar este gate cerrado: credential de aplicación guardada directamente por el usuario, persistencia de configuración verificada sin valores secretos, un envío autorizado aceptado, recepción comprobada y recorrido completo de recuperación. Ninguna cuenta Google/IONOS, contrato, DNS ni producción modificados en este paso.
