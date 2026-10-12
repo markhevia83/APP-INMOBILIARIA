@@ -1,6 +1,15 @@
 const uuid = value => typeof value === 'string' && /^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(value);
 const object = value => value && typeof value === 'object' && !Array.isArray(value);
 const text = value => typeof value === 'string' && value.trim().length > 0;
+export function authErrorMessage(error,operation='login') {
+  const code=String(error?.code||''),message=String(error?.message||'');
+  if(message.startsWith('Usa una contraseña de al menos')||message==='No hay conexión con SELF-IA.')return message;
+  if(code==='invalid_credentials')return 'Correo o contraseña incorrectos.';
+  if(code==='email_not_confirmed')return 'Confirma tu correo antes de entrar. Revisa también la carpeta de spam.';
+  if(/rate_limit/.test(code)||/rate limit/i.test(message))return 'Se ha alcanzado el límite temporal de intentos o correos. Espera antes de volver a intentarlo.';
+  if(/sending.*email/i.test(message)||code==='email_address_not_authorized')return 'No se ha podido enviar el correo de acceso. No necesitas cambiar tu contraseña para resolver este fallo de envío.';
+  return operation==='recover'?'No se ha podido solicitar el correo de recuperación. Inténtalo más tarde.':operation==='password'?'No se ha podido actualizar la contraseña. Revisa el enlace de recuperación.':operation==='signup'?'No se ha podido completar el registro. Conserva tus datos y vuelve a intentarlo más tarde.':'No se ha podido iniciar sesión. Revisa tus datos y vuelve a intentarlo.';
+}
 export function mutationErrorMessage(error) {
   const value=String(error?.message||'');
   if(value.includes('schedule_conflict_use_review'))return 'Esta acción ya tiene una fecha guardada. Para cambiarla, abre «Revisar o corregir resultado» y elige «Lo moví».';
