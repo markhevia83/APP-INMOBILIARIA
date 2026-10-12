@@ -98,7 +98,7 @@ test('real SQL: corrected skip, conflicting scheduling, atomic idempotent agenda
   const exported=await scalar('select selfia_export_data()');assert.equal(exported.user_id,uid);assert.ok(exported.data.profile_items.some(item=>item.id===independent.id));assert.ok(exported.data.action_reviews.length>=72);
   const erasure=await scalar('select selfia_request_erasure($1)',[await uuid()]);assert.equal(erasure.status,'pending');assert.equal((await scalar('select selfia_request_erasure($1)',[await uuid()])).id,erasure.id);
   assert.equal(await scalar('select count(*)::int from agenda_events'),2,'requesting erasure does not falsely pretend deletion');
-  const proposal=crypto.randomUUID(),checked=new Date().toISOString(),expires=new Date(Date.now()+1800000).toISOString();
+  const proposal=crypto.randomUUID(),checkedAt=new Date(),checked=checkedAt.toISOString(),expires=new Date(checkedAt.getTime()+1800000).toISOString();
   const tz='Europe/Madrid',date=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   const plan={title:'Plan flexible',description:'Actividad en casa',timing_kind:'flexible',requires_opening_hours:false,source_url:'https://example.test/plan'};
   await db.exec('reset role');
