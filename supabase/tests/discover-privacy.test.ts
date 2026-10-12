@@ -13,7 +13,8 @@ Deno.test('plan search only sends explicit search choices and does not load inti
    const body=init?.body?JSON.parse(String(init.body)):null;
    const reply=(data:any)=>new Response(JSON.stringify(data),{status:200,headers:{'content-type':'application/json'}});
    if(url.pathname==='/auth/v1/user')return reply({id:user,email:'synthetic@example.test'});
-   if(url.pathname==='/rest/v1/rpc/selfia_reserve_ai_usage')return reply({allowed:true});
+   if(url.pathname==='/rest/v1/rpc/selfia_reserve_ai_cost')return reply({allowed:true,reservation_id:crypto.randomUUID(),attempt:1});
+   if(url.pathname==='/rest/v1/rpc/selfia_settle_ai_cost')return reply(null);
    if(url.pathname==='/rest/v1/ai_usage')return new Response(null,{status:204});
    if(url.origin==='https://api.openai.com'&&url.pathname==='/v1/responses'){
     payload=body;return reply({model:'synthetic',usage:{input_tokens:20,output_tokens:20},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify({intro:'Prueba',plans:[{title:'Paseo',source_url:'https://example.test/plan',timing_kind:'flexible',requires_opening_hours:false}]}),annotations:[{type:'url_citation',url:'https://example.test/plan',title:'Fuente'}]}]}]});

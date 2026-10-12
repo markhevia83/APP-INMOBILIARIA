@@ -1,0 +1,54 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile,readdir} from 'node:fs/promises';
+import {PGlite} from '@electric-sql/pglite';
+import {readApiResponse} from '../src/api-protocol.js';
+const user='10000000-0000-4000-8000-000000000001';
+test('monthly money guard reserves before use, retains unknown charges, settles once and denies client access',async()=>{
+ const db=new PGlite();try{
+  await db.exec(await readFile(new URL('./baseline.sql',import.meta.url),'utf8'));
+  const dir=new URL('../../supabase/migrations/',import.meta.url);
+  for(const file of (await readdir(dir)).filter(x=>x.endsWith('.sql')).sort())await db.exec(await readFile(new URL(file,dir),'utf8'));
+  await db.query('insert into auth.users values($1)',[user]);
+  const reserve=async cost=>(await db.query("select selfia_reserve_ai_cost($1,$2,'chat',1,$3) as r",[user,crypto.randomUUID(),cost])).rows[0].r;
+  const balance=async()=>(await db.query('select * from ai_monthly_budget')).rows[0];
+  const first=await reserve(60000000);assert.equal(first.allowed,true);assert.equal(first.attempt,1);
+  assert.equal((await balance()).warning_80,true);
+  assert.equal((await reserve(15000001)).reason,'monthly_budget');
+  assert.equal((await db.query('select count(*)::int n from ai_usage')).rows[0].n,1,'denial cannot reserve capacity');
+  await db.query('select selfia_settle_ai_cost($1,$2)',[first.reservation_id,1000000]);
+  const snapshot=await balance();assert.equal(Number(snapshot.spent_microusd),1000000);assert.equal(Number(snapshot.held_microusd),0);
+  await db.query('select selfia_settle_ai_cost($1,$2)',[first.reservation_id,70000000]);assert.deepEqual(await balance(),snapshot,'duplicate settlement cannot charge twice');
+  const unknown=await reserve(74000000);assert.equal(unknown.allowed,true);
+  await db.exec("update ai_usage set lease_until=now()-interval '1 day',status='failed'");
+  assert.equal((await reserve(1)).reason,'monthly_budget','expired request does not refund financial reserve');
+  await db.query('select selfia_settle_ai_cost($1,null)',[unknown.reservation_id]);
+  assert.equal(Number((await balance()).spent_microusd),75000000);assert.equal((await balance()).uncertain_usage,true);assert.equal((await balance()).blocked,true);
+  await db.exec('set role authenticated');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[user]);
+  for(const table of ['ai_monthly_budget','ai_cost_reservations'])await assert.rejects(()=>db.query('select * from '+table),e=>e.code==='42501');
+  await assert.rejects(()=>reserve(1),e=>e.code==='42501');
+  await assert.rejects(()=>db.query('select selfia_settle_ai_cost($1,0)',[first.reservation_id]),e=>e.code==='42501');
+  await db.exec('reset role;set role anon');
+  for(const table of ['ai_monthly_budget','ai_cost_reservations'])await assert.rejects(()=>db.query('select * from '+table),e=>e.code==='42501');
+  await assert.rejects(()=>reserve(1),e=>e.code==='42501');
+  await db.exec('reset role');
+  assert.equal((await db.query("select count(*)::int n from information_schema.columns where table_schema='public' and table_name in ('ai_monthly_budget','ai_cost_reservations') and column_name='user_id'")).rows[0].n,0,'deleting user data cannot refund the aggregate budget');
+ }finally{await db.close()}
+});
+test('unexpected excess charges block new calls and last-month spending cannot use this-month allowance',async()=>{
+ const db=new PGlite();try{
+  await db.exec(await readFile(new URL('./baseline.sql',import.meta.url),'utf8'));
+  const dir=new URL('../../supabase/migrations/',import.meta.url);
+  for(const file of (await readdir(dir)).filter(x=>x.endsWith('.sql')).sort())await db.exec(await readFile(new URL(file,dir),'utf8'));
+  await db.query('insert into auth.users values($1)',[user]);
+  await db.exec("insert into ai_monthly_budget(month,spent_microusd,blocked) values((date_trunc('month',now() at time zone 'UTC')-interval '1 month')::date,75000000,true)");
+  const r=(await db.query("select selfia_reserve_ai_cost($1,$2,'chat',1,1000) r",[user,crypto.randomUUID()])).rows[0].r;assert.equal(r.allowed,true);
+  await db.query('select selfia_settle_ai_cost($1,1001)',[r.reservation_id]);
+  const denied=(await db.query("select selfia_reserve_ai_cost($1,$2,'chat',1,1) r",[user,crypto.randomUUID()])).rows[0].r;
+  assert.equal(denied.reason,'monthly_budget','unexpected extra billing must block before the full cap');
+  const previous=(await db.query("select spent_microusd from ai_monthly_budget where month=(date_trunc('month',now() at time zone 'UTC')-interval '1 month')::date")).rows[0];assert.equal(Number(previous.spent_microusd),75000000);
+ }finally{await db.close()}
+});
+test('monthly budget exhaustion preserves a meaningful client error instead of encouraging repeated retries',async()=>{
+ for(const error of [{code:'monthly_budget'},'monthly_budget'])await assert.rejects(()=>readApiResponse(new Response(JSON.stringify({error}),{status:429}),'selfia-chat'),/presupuesto mensual/);
+});

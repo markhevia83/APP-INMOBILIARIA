@@ -12,7 +12,8 @@ Deno.test('actual chat handler keeps fresh independent profile facts after withd
    const body=init?.body?JSON.parse(String(init.body)):null;
    const reply=(data:any)=>new Response(JSON.stringify(data),{status:200,headers:{'content-type':'application/json'}});
    if(url.pathname==='/auth/v1/user')return reply({id:user});
-   if(url.pathname==='/rest/v1/rpc/selfia_reserve_ai_usage')return reply({allowed:true});
+   if(url.pathname==='/rest/v1/rpc/selfia_reserve_ai_cost')return reply({allowed:true,reservation_id:crypto.randomUUID(),attempt:1});
+   if(url.pathname==='/rest/v1/rpc/selfia_settle_ai_cost')return reply(null);
    if(url.pathname==='/rest/v1/ai_usage')return new Response(null,{status:204});
    if(url.pathname==='/rest/v1/conversations')return reply({id:conversation});
    if(url.pathname==='/rest/v1/profiles')return reply({base_profile:{secret:'SYNTHETIC_LEGACY_PROFILE'}});
