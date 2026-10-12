@@ -58,3 +58,13 @@ Google requiere verificación en dos pasos para una contraseña de aplicación: 
 Antes de declarar este gate cerrado: credencial de aplicación guardada directamente por el usuario, persistencia de configuración verificada sin valores secretos, un envío autorizado aceptado, recepción comprobada y recorrido completo de recuperación. Ninguna cuenta Google/IONOS, contrato, DNS ni producción modificados en este paso.
 
 La página oficial de contraseñas de aplicación redirigió a verificación de identidad de la cuenta Google correcta. Se dejó al usuario ese paso, sin introducir credenciales ni activar nuevos permisos. El borrador SMTP sigue sin guardar hasta que el usuario genere y pegue la credencial adecuada.
+
+## Gmail: envío y llegada verificados
+
+El usuario confirmó Guardar. Recarga de Supabase de pruebas mostró custom SMTP activo, smtp.gmail.com:465 y Save deshabilitado; contraseña almacenada oculta. No se leyó ni copió ninguna contraseña de aplicación.
+
+La primera comprobación por SDK no alcanzó Supabase: ConnectTimeout antes de HTTP. Un default del helper imprimió status200 pese al error de transporte; nunca se consideró éxito. Se corrigió el helper para accepted=false, statusnull y salida de error en ese caso.
+
+Una única solicitud posterior desde la preview aislada glzduispn fue aceptada y mostró el aviso de recuperación. Gmail confirmó un mensaje en INBOX a las18:00:58UTC, asunto Reset your password, remitente SELF-IA, proyecto test tleqdegnzeukonbbrrzk y Received autenticado mediante smtp.gmail.com/TLS1.3. Consulta acotada de auth_logs entre17:59–18:02UTC no devolvió errores. Direcciones personales, IDs del buzón y tokens se omiten de este documento público.
+
+Se abrió únicamente ese mensaje de pruebas y se siguió su enlace: Supabase test, tipo recovery y redirect exacto al alias selfia-continuity-preview. El alias mostró Cambiar contraseña y Guardar contraseña. Verificado el fin del rechazo SMTP previo y la llegada/redirect/pantalla de recuperación. La contraseña nueva de SELF-IA debe introducirla y guardarla el humano; aún pendientes nuevo login, enlace reutilizado/vencido y registro con este proveedor. No se marca F07 completo ni se aprueba beta externa. Gmail personal conserva la advertencia de entrega transaccional del panel; un mensaje recibido no garantiza todos los destinatarios ni una SLA.
