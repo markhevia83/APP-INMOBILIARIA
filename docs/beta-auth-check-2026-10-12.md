@@ -34,3 +34,11 @@ Segundo intento después de que el usuario confirmó guardar la credencial corre
 El turno de Astra01a1311b-04e6-7df3-8236-5148c03f26d9 creó y verificó una cuenta técnica sin buzón para que el usuario pueda seguir probando. Esto resuelve el acceso de esa cuenta, no SMTP ni recuperación. Credenciales omitidas del repositorio. Consulta limitada de logs entre16:40 y17:30UTC devuelve tres registros con535; no equivale necesariamente a tres intentos independientes. Host/puerto actuales coinciden con la documentación IONOS: smtp.ionos.es:465.
 
 El usuario indicó haber cambiado la contraseña del buzón y escrito la nueva en Supabase. Se solicitó que complete Guardar; la herramienta de navegador reserva al humano entrada, confirmación y envío al sustituir una credencial. No se imprime ni guarda la contraseña compartida. Entrega/recuperación aún sin verificar con esa última corrección.
+
+## Última comprobación tras guardado humano
+
+El usuario confirmó Guardar después de cambiar la credencial. Un único resetPasswordForEmail al buzón de pruebas autorizado, con redirect al alias estable exacto, devolvió500 unexpected_failure / Error sending recovery email. El intento se realizó con cliente efímero sin sesión; no cerró B ni la sesión del usuario. Consulta acotada de auth_logs desde17:38UTC confirmó un registro SMTP_AUTH_535. No se repite en bucle.
+
+El Webmail oficial de IONOS, con autorización humana específica para comprobar acceso, rechazó la dirección elegida como cuenta no encontrada antes de pedir contraseña. La contraseña no se transmitió a IONOS. DNS público confirma MX00/MX01 de IONOS; el dominio no prueba que esa dirección concreta sea un buzón válido ni qué producto usa. El usuario indica haber cambiado la contraseña en el panel IONOS.
+
+Host465 y formulario SMTP activo/persistido se verificaron; el panel oculta usuario/remitente. Reintroducir los valores de identidad autorizados no habilitó Guardar, así que no se dio por hecha una corrección de identidad ni se modificó contraseña. Las comparaciones DOM con valores ocultos no son prueba de errata. El panel administrativo IONOS no tiene sesión abierta en este navegador: pendiente acceso humano para comprobar dirección exacta, tipo de buzón/alias y lugar donde se cambió la contraseña. No se adivinan credenciales ni se modifica correo empresarial, DNS o producción.
