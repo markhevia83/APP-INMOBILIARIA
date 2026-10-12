@@ -2,7 +2,7 @@
   "date": "2026-10-11",
   "status": "internal_candidate_not_approved_for_external_beta",
   "repository": "markhevia83/APP-INMOBILIARIA",
-  "code_commit": "5c100576ba602ade713a7278806b9c4d5d4e16bb",
+  "code_commit": "0ecc6dc93c6fa3b567f1fc290e2a5da76fe9befb",
   "release_commit_note": "The containing Git commit may add documentation only; verify its SHA through Vercel gitSource/meta and compare source hashes to code_commit.",
   "source_branch": "selfia-audit-p0-onboarding",
   "preview_branch": "selfia-continuity-preview",
@@ -18,7 +18,7 @@
   },
   "checks": {
     "local_node_tests": {
-      "passed": 20,
+      "passed": 22,
       "failed": 0
     },
     "local_react_browser": "passed; mobile+desktop; real PGlite SQL/RLS; synthetic Auth/model; no external requests",
@@ -33,10 +33,12 @@
     "deno_chat_provenance": "passed on local corrected handler; synthetic backend/model; keeps independent declaration and excludes withdrawn/legacy facts",
     "independent_browser": "Astra logged in with B on release 6559f57; reproduced F09 and verified F03 differing-date rejection; review pending approval, not final",
     "deno_server_preflight": "3 passed, 0 failed on 2026-10-12: chat provenance, all six unauthenticated/invalid-token handlers, plan-search data minimization; synthetic Auth/model",
-    "real_model_f09_retest": "requested from independent Astra; pending, not passed"
+    "real_model_f09_retest": "requested from independent Astra; pending, not passed",
+    "owner_sql_matrix": "PASS all 22 owner tables: foreign SELECT/UPDATE/DELETE, owner-spoof INSERT, anon SELECT; brain configuration hidden. SQL roles, not HTTP JWT.",
+    "hosted_owner_links": "Missing profile/onboarding link guards reproduced and repaired in test database; foreign references rejected and legitimate inserts accepted in rolled-back synthetic transaction."
   },
   "source_sha256_git_blob": {
-    "selfia-app/package.json": "883af60e8fd7e12beaa87c3486cb990eeb421bacf00d68921a2d59e6465fb5a3",
+    "selfia-app/package.json": "aeec9a5ecdd2f259d25299effebe9240391ba148c33fb3851278d9c574fb7747",
     "selfia-app/pnpm-lock.yaml": "25f451a02e203864aed3105ae88094c9a7997242b4548d96a9387114120f76e4",
     "selfia-app/pnpm-workspace.yaml": "6ef0ac8a07895b4ffcc207322095ce428bc1153ae8bd29a3694dce2d0e5ac43d",
     "selfia-app/src/ChatText.jsx": "4722cc2cea9591d56ea13e637e244a501b9e5bbe7d50445391c668ece1e3f5ec",
@@ -66,7 +68,8 @@
     "supabase/migrations/20261011164245_audit_privacy_requests.sql": "2a5778b77825731f3fb8636efecd6ab53bfcf8511d35818c553aee605a09a209",
     "supabase/migrations/20261011174000_audit_schedule_coherence.sql": "af910301b9c6b61ccd8e9558ab310bef969d07441cb920e996a83418a8f8d413",
     "supabase/migrations/20261011174800_audit_link_indexes.sql": "7af3deb0184c08ecdcf2edbe5699552ea6d6da55ea4f7dc3fd527268b4bc5a30",
-    "supabase/migrations/20261011175300_audit_action_source_index.sql": "2a18712c52c7a97cabf7725f5d669dc6e81c9baa8ee9227d5694064a42674bf5"
+    "supabase/migrations/20261011175300_audit_action_source_index.sql": "2a18712c52c7a97cabf7725f5d669dc6e81c9baa8ee9227d5694064a42674bf5",
+    "supabase/migrations/20261012020000_beta_owner_links.sql": "ea0ec0f9c03c2e5db7ed1930ec89096122bcde0ccf374cded099307d665b3a7e"
   },
   "edge_functions": [
     {
@@ -156,10 +159,14 @@
     {
       "version": "20261011170616",
       "name": "audit_action_source_index"
+    },
+    {
+      "version": "20261012102426",
+      "name": "beta_owner_links"
     }
   ],
   "pending_edge_deployments": [],
-  "source_alignment_note": "Hosted selfia-chat v14 includes the source correction in code_commit 5c100576ba602ade713a7278806b9c4d5d4e16bb. Independent real-model verification is pending; deployment is not an audit closure.",
+  "source_alignment_note": "Hosted chat v14 unchanged; new beta_owner_links migration is applied to test only. Frontend sources unchanged from 5c10057; independent real-model verification remains pending.",
   "last_updated": "2026-10-12",
   "authorizations": [
     {
