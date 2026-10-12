@@ -220,12 +220,16 @@
     ]
   },
   "verified_preview": {
-    "url": "https://self-ia-mobile-glzduispn-self-ia.vercel.app/",
-    "deployment_id": "dpl_2t5YSYEZqMCfpmjgDzPU25njhSeX",
-    "sha": "33c00718312517de8b8d272c4af11c540d266a06",
+    "url": "https://self-ia-mobile-rb27puzf8-self-ia.vercel.app/",
+    "deployment_id": "dpl_34ThLMxBm9429oXqJtpXChn8pGaR",
+    "sha": "09cec3995e72815d17e87294c02fb056b7727461",
     "target": "preview",
     "state": "READY",
     "test_backend_bundle_verified": true,
-    "superseded_by_pending_code_commit": "62deab880184f7c7831922cdfe0a04a81e8093d5"
+    "bundle": "/assets/index-D_qQwSBU.js",
+    "bundle_http_status": 200,
+    "auth_error_repair_verified": true,
+    "signup_origin_redirect_verified": true,
+    "browser_smoke": "Login screen rendered; no emails submitted; hosted authenticated UI full-cycle regression for this frontend build pending."
   }
 }
