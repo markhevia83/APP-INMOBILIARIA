@@ -31,6 +31,8 @@ Urgente adicional: metadatos de la clave «SELF-IA Pruebas» verificados el 12 d
 
 Estética permanece para el final. Main, producción de Vercel y Supabase `hhbipvgusfhpcbdifxyy` intactos.
 
+Revisión independiente final del onboarding: Astra turno `01a131bd-82c8-7c91-9c80-4cdd0437ecb5`, dos pruebas seleccionadas y reproducción local pasan: una petición inicial y ningún reenvío tras recarga; edición explícita permite una nueva petición. Preview fc6b766 READY. No modelo ni modificación de B. Este P2 queda cerrado en esa cobertura; el despliegue del nuevo chat y la caducidad temporal siguen pendientes.
+
 ## Segunda revisión de Astra y correcciones
 
 Turno independiente `01a131a0-9623-7cb1-aed6-3aa2cfffae33`: P1, ayuda de crisis ausente cuando se deniega el modelo; P1, consejo de cambiar claves/ubicación en abuso sin valorar alerta al agresor; P2, reintento confuso después de agotar intentos. No aprobación de beta.
