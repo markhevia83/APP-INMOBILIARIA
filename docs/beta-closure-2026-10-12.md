@@ -31,7 +31,7 @@ Urgente adicional: metadatos de la clave «SELF-IA Pruebas» verificados el 12 d
 
 Estética permanece para el final. Main, producción de Vercel y Supabase `hhbipvgusfhpcbdifxyy` intactos.
 
-Revisión independiente final del onboarding: Astra turno `01a131bd-82c8-7c91-9c80-4cdd0437ecb5`, dos pruebas seleccionadas y reproducción local pasan: una petición inicial y ningún reenvío tras recarga; edición explícita permite una nueva petición. Preview fc6b766 READY. No modelo ni modificación de B. Este P2 queda cerrado en esa cobertura; el despliegue del nuevo chat y la caducidad temporal siguen pendientes.
+Revisión independiente final del onboarding: Astra turno `01a131bd-82c8-7c91-9c80-4cdd0437ecb5`, dos pruebas seleccionadas y reproducción local pasan: una petición inicial y ningún reenvío tras recarga; edición explícita permite una nueva petición. Preview fc6b766 READY. No modelo ni modificación de B. Este P2 queda cerrado en esa cobertura; el despliegue se verificó después como chat21; la caducidad temporal y el retest del modelo siguen pendientes.
 
 ## Segunda revisión de Astra y correcciones
 
@@ -41,7 +41,10 @@ Ayuda urgente incorporada al acceso, onboarding y aplicación como contenido loc
 
 Reglas sobre tecnología en abuso condicionan cambios de cuentas/localización a un plan de seguridad y al riesgo de escalada, incluso con otro dispositivo. Fundamento: [Safety Net, Technology Safety Plan](https://www.techsafety.org/resources-survivors/technology-safety-plan). La orientación urgente pide apoyo humano/emergencias sin presumir país; [NHS, Urgent support](https://www.nhs.uk/every-mind-matters/urgent-support/) respalda la necesidad de ayuda inmediata, no un número aplicable globalmente.
 
-Daily16 y motivation16 incluyen estas nuevas reglas. **El despliegue del chat actualizado sigue rechazado por errores internos de Supabase; chat20 continúa activo con el paquete anterior.** No declarar el consejo del modelo corregido en vivo ni el campo server-side support_message activo todavía. La ayuda del cliente es independiente de ese despliegue. Queda desplegar y volver a comprobar chat, repetir el caso de abuso y completar la revisión independiente en la versión final sin eludir el cupo.
+Daily16 y motivation16 incluyen estas nuevas reglas. **El despliegue se recuperó: chat21 ACTIVE contiene el nuevo paquete.** Prueba HTTP real de crisis bajo cupo diario429 devuelve support_message útil y no añade mensajes/memorias, sin llamada al modelo ni cambios de límite. La ayuda del cliente sigue independiente del servidor. Queda repetir el caso de abuso y los otros escenarios semánticos en la versión final cuando haya capacidad; el éxito del despliegue no certifica la respuesta del modelo.
 
 
 Astra validó independientemente ayuda local sin sesión y errores/reintentos del chat (3/3), pero encontró la vía de onboarding. Reparada en fc6b766: prueba de navegador con una sola petición fallida, ninguna repetición antes/después de recarga, borrador conservado; edición explícita continúa el flujo. Unit tests cubren vacío intencional, respuesta tardía y cambio de cuenta. Full32 Node pasa en b62a14f; ese commit corrige solo un fixture que podía exceder por1ms el máximo30min (dos lecturas de reloj). Producción ya usa un solo instante; no se cambió la protección SQL. Revisión independiente final solicitada.
+
+
+Actualización final: chat21, hash5289eb4182ce68c0a213a33ce0ff679fe229d26dd056dd043158f6f1933149b2, activo. Harness cloud-urgent-cycle corregido para usar conversations.started_at (no created_at) y transporte con una única repetición acotada, conserva UUID; ejecución completa PASS. Primer intento de conexión y error del harness no se cuentan como defectos de producto. Main conserva a08ac1b755434516758a9abe059932b4c6a8a7bd; cambios y evidencias solo en ramas seguras.

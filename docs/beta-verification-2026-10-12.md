@@ -51,3 +51,5 @@ El estado vigente y los límites de cada prueba están en [beta-closure-2026-10-
 Segunda revisión independiente: ayuda urgente local y rechazo terminal de reintentos reparados; 32 pruebas Node pasan. Daily16/motivation16 incluyen regla de seguridad tecnológica; despliegue nuevo de chat bloqueado por errores internos, chat20 sigue anterior. Consultar manifiesto y beta-closure antes de declarar reparaciones activas.
 
 Reparación posterior del onboarding terminal en fc6b766; full32 Node pasa tras corregir el fixture de reloj en b62a14f. Registro nuevo, confirmación/entrada y link consumido por Gmail pasan; no caducidad temporal.
+
+Actualización que sustituye el bloqueo de despliegue indicado anteriormente: chat21 ya activo y ayuda urgente comprobada con cuota429 real, sin mensajes/memorias nuevos. No repetir semántica del modelo mientras no haya cupo, ni atribuir esa prueba al consejo de abuso.

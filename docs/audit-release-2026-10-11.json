@@ -2,7 +2,7 @@
   "date": "2026-10-11",
   "status": "internal_candidate_not_approved_for_external_beta",
   "repository": "markhevia83/APP-INMOBILIARIA",
-  "code_commit": "b62a14f452bf092e9fb8031ddfb17d31df034df5",
+  "code_commit": "875b1cdc5ef62b9b213a4cf8f56e0ba8f881f661",
   "release_commit_note": "The containing Git commit may add documentation only; verify its SHA through Vercel gitSource/meta and compare source hashes to code_commit.",
   "source_branch": "selfia-audit-p0-onboarding",
   "preview_branch": "selfia-continuity-preview",
@@ -63,7 +63,8 @@
     "signup_confirmation": "PASS NEW synthetic Gmail-plus alias routed to authorized mailbox: actual Auth user created/confirmation sent; INBOX received20:01:56UTC; verify303 issues token to exact stable redirect; passwordlogin200 confirmed; reused link otp_expired without token; both new-identity sessions locally revoked204. Initial transport timeout and resend429 not counted as creation failure: Auth/mail evidence resolves unknown outcome. No credentials/links stored in files. Temporal unused-link expiration remains pending.",
     "onboarding_terminal_retry": "PASS account/tab-scoped sessionStorage request UUID/draft/terminalReason survives reload, zero resends after terminal retry_limit, explicit edit starts new request, new text while response arrives retained, logout/account change discards draft and stale response. Real React local browser + unit fixtures, no external model.",
     "test_harness_clock": "Full suite initially exposed nondeterministic fixture: two wall-clock reads could exceed the SQL max30min expiry by1ms. Production discover already derives both times from one instant. Fixture aligned to that implementation; full32 rerun passes. No relaxation of SQL bound.",
-    "independent_onboarding_retry": "PASS Astra turn01a131bd-82c8-7c91-9c80-4cdd0437ecb5:2 selected tests and local reproducer;1 initial request/no resend after reload, explicit edit permitted; fc6b766 READY. No model or B changes. Coverage-limited closure, not beta approval."
+    "independent_onboarding_retry": "PASS Astra turn01a131bd-82c8-7c91-9c80-4cdd0437ecb5:2 selected tests and local reproducer;1 initial request/no resend after reload, explicit edit permitted; fc6b766 READY. No model or B changes. Coverage-limited closure, not beta approval.",
+    "hosted_urgent_quota": "PASS actual Auth A, existing own conversation: global_daily_budget429 returns country-neutral urgent support_message, no added messages/memories, local A signout only. Initial transport failure and incorrect test sorting column were corrected; successful full rerun, no model/limit bypass."
   },
   "source_sha256_git_blob": {
     "selfia-app/.env.example": "408e7137d558890f3b0dca3d66755496445aced203c058cbb89b93971031b18b",
@@ -95,6 +96,7 @@
     "selfia-app/tests/cloud-input-validation.mjs": "cef19b6f4213cb7316b4a78b64d1ff7099b062c2fd6ace512c5fb3ac4708bed3",
     "selfia-app/tests/cloud-integrity-cycle.mjs": "4dd7fb4d74ab7c538a7133fd808198b2d7b277dac84224b972563eba58f156fa",
     "selfia-app/tests/cloud-operations-cycle.mjs": "4437a5a877c8d7c55ad9bd1c9f7769f4bc4b5577103546f71db9c1fd4e6bc1dd",
+    "selfia-app/tests/cloud-urgent-cycle.mjs": "b6afd9b567e1294c5f59937a739273bd4735e1b6ea2c495115c26e67b83a9379",
     "selfia-app/tests/continuity.test.mjs": "74b40782e47ba12c90b8e0a63369df7b250ab795b16b4148c5a99c1f0010cdb7",
     "selfia-app/tests/erasure.test.mjs": "1d9d94b3b64032998520e16b9d7d81a49f462fdd52e9aa7ad8d8595a8370934d",
     "selfia-app/tests/followup-context.test.mjs": "7f7bfbb949301093b516e28dbb8a39d3e7955895f9550ba454545b035abd58b4",
@@ -153,9 +155,9 @@
   "edge_functions": [
     {
       "name": "selfia-chat",
-      "version": 20,
+      "version": 21,
       "status": "ACTIVE",
-      "ezbr_sha256": "7a074922d1738e9222dc1eb118db49c50b872d4c9bd3a59fe61566860460c03c",
+      "ezbr_sha256": "5289eb4182ce68c0a213a33ce0ff679fe229d26dd056dd043158f6f1933149b2",
       "entrypoint": "index.js",
       "verify_jwt": false
     },
@@ -282,10 +284,8 @@
       "name": "beta_operations_daily_capacity"
     }
   ],
-  "pending_edge_deployments": [
-    "selfia-chat"
-  ],
-  "source_alignment_note": "Frontend e838556 active in READY preview a5fltkh4p; protected source fetched using authorized Vercel connector, app-C45-0arZ.js confirms test binding/urgent help/terminalReason. Daily16/motivation16 include new abuse rule as readable esbuild browser-ESM SDK bundles. Chat20 remains previous package 7a0749; updated source/urgent server fallback deployment returned repeated internal Supabase errors with source and alternative bundles. Root cause unconfirmed. Ops3 and erasure-drill1 unchanged and real HTTP verified. No beta approval. Frontend fc6b766 now READY with account-scoped onboarding terminal repair; b62a14f only fixes clock fixture and does not change runtime code. New model rule still absent from chat20, deployment remains pending.",
+  "pending_edge_deployments": [],
+  "source_alignment_note": "Final runtime preview fc6b766 READY; later commits change fixture/tests/docs only. Chat21 ACTIVE updated package hash5289eb with abuse escalation-planning rule and urgent error support; hosted daily-quota crisis test PASS. Daily16/motivation16 include same rule; ops3/erasure-drill1 unchanged. Deployment errors recovered after bounded packaging alternatives and later recheck; root cause not established. Abuse/model semantic rerun still pending because daily guard is nearly exhausted; not beta approved.",
   "last_updated": "2026-10-12",
   "authorizations": [
     {
