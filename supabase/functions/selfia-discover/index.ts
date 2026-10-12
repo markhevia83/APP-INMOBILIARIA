@@ -1,3 +1,4 @@
+import {safeAiError} from '../_shared/ai-errors.ts';
 import {limitedAiFetch} from '../_shared/ai-request.ts';
 import {eligiblePlanProposals} from '../_shared/profile-provenance.ts';
 import {availablePlans} from '../_shared/plan-timing.ts';
@@ -40,6 +41,7 @@ Para today_plan ofrece únicamente planes realizables a partir de AHORA, dejando
 Ciudad: ${city||"no indicada"}. País: ${country}. Intención: ${intent}. Tipo de plan pedido: ${vibe}.
 `;
 
+ try{
  const rr=await limitedAiFetch(user.id,'discover',null,{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({
   store:false,model:"gpt-5.6",
   reasoning:{effort:"low"},
@@ -50,7 +52,7 @@ Ciudad: ${city||"no indicada"}. País: ${country}. Intención: ${intent}. Tipo d
   max_output_tokens:2000
  })});
  const out=await rr.json();
- if(!rr.ok)return json({error:out?.error?.code??"openai_error",message:out?.error?.message??"No se pudieron buscar planes."},rr.status===429?429:rr.status===413?413:502);
+ if(!rr.ok){const failure=safeAiError(rr.status,out?.error?.code);return json(failure,failure.status);}
  let textOut=String(out?.output_text??"").trim();
  let annotations:any[]=[];
  if(Array.isArray(out?.output)){
@@ -82,4 +84,5 @@ Ciudad: ${city||"no indicada"}. País: ${country}. Intención: ${intent}. Tipo d
   currentPlans=saved.map((row:any)=>({...row.payload,proposal_id:row.id,checked_at:row.checked_at,expires_at:row.expires_at}));
  }
  return json({intro:currentPlans.length?String(parsed?.intro??""):"No he encontrado una propuesta con fuente que pueda guardarse ahora. Los planes con horarios de recintos o eventos siguen pendientes de verificación. Prueba un plan en casa u otro ritmo.",plans:currentPlans,sources,intent,vibe,city:city||null,local_date:localDate});
+ }catch{return json({error:'ai_response_failed',message:'No se pudo completar la respuesta. Inténtalo más tarde.'},502)}
 });

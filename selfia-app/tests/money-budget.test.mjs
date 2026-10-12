@@ -52,3 +52,6 @@ test('unexpected excess charges block new calls and last-month spending cannot u
 test('monthly budget exhaustion preserves a meaningful client error instead of encouraging repeated retries',async()=>{
  for(const error of [{code:'monthly_budget'},'monthly_budget'])await assert.rejects(()=>readApiResponse(new Response(JSON.stringify({error}),{status:429}),'selfia-chat'),/presupuesto mensual/);
 });
+test('daily quota exhaustion explains the UTC reset even when the server message is private or absent',async()=>{
+ for(const error of [{code:'global_daily_budget'},'global_daily_budget','user_daily_limit'])await assert.rejects(()=>readApiResponse(new Response(JSON.stringify({error,message:'SYNTHETIC_PRIVATE_DETAIL'}),{status:429}),'selfia-chat'),e=>e.status===429&&e.message.includes('00:00 UTC')&&!e.message.includes('SYNTHETIC_PRIVATE_DETAIL')&&!e.message.includes('un momento'));
+});

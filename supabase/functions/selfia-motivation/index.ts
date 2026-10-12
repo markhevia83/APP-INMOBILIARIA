@@ -1,3 +1,5 @@
+import {SELFIA_SAFETY_RULES} from '../_shared/safety-rules.ts';
+import {safeAiError} from '../_shared/ai-errors.ts';
 import {limitedAiFetch} from '../_shared/ai-request.ts';
 import {loadContext} from "../_shared/load-context.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.57.4";
@@ -38,16 +40,16 @@ Feedback previo: ${JSON.stringify(feedback??[])}`;
  },required:["title","text","format","video_query"]};
  try{
   const rr=await limitedAiFetch(user.id,'motivation',null,{method:"POST",headers:{"Authorization":"Bearer "+apiKey,"Content-Type":"application/json"},body:JSON.stringify({
-   store:false,model:Deno.env.get("OPENAI_MODEL")||"gpt-5.6",reasoning:{effort:"low"},instructions,input:"Genera una intervención para este momento.",max_output_tokens:600,
+   store:false,model:Deno.env.get("OPENAI_MODEL")||"gpt-5.6",reasoning:{effort:"low"},instructions:instructions+'\n'+SELFIA_SAFETY_RULES,input:"Genera una intervención para este momento.",max_output_tokens:600,
    text:{format:{type:"json_schema",name:"motivation",strict:true,schema}}
   })});
   const out=await rr.json();
-  if(!rr.ok)return json({error:out?.error?.code??"openai_error",message:out?.error?.message??"No se pudo generar motivación."},rr.status===429?429:rr.status===413?413:502);
+ if(!rr.ok){const failure=safeAiError(rr.status,out?.error?.code);return json(failure,failure.status);}
   let raw=String(out?.output_text??"").trim();
   if(!raw&&Array.isArray(out?.output))raw=out.output.flatMap((x:any)=>x?.content??[]).filter((x:any)=>x?.type==="output_text").map((x:any)=>x.text).join("\n").trim();
   const parsed=JSON.parse(raw);
   const {data:row,error}=await sb.from("motivation_feedback").insert({user_id:user.id,prompt_type:promptType,content:parsed.text,content_format:parsed.format,video_query:parsed.video_query}).select("id").single();
-  if(error)return json({error:error.message},400);
+  if(error)return json({error:"motivation_not_saved",message:"No se pudo guardar la propuesta."},503);
   return json({id:row.id,...parsed});
- }catch(e){return json({error:"motivation_failed",message:String((e as Error)?.message??e)},502)}
+ }catch(e){return json({error:"motivation_failed",message:"No se pudo generar la propuesta. Inténtalo más tarde."},502)}
 });

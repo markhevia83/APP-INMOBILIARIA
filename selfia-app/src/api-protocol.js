@@ -30,7 +30,9 @@ export async function readApiResponse(response, path, body = {}) {
   let data;
   try { data = await response.json(); } catch { if (response.ok) throw new ProtocolError(); }
   if (!response.ok) {
-    const message = (data?.error?.code === 'monthly_budget' || data?.error === 'monthly_budget') ? 'El presupuesto mensual de IA está reservado o agotado. El responsable debe revisar el gasto antes de continuar.' : response.status === 429 ? 'Hay demasiadas peticiones. Espera un momento y reintenta.' :
+    const code = typeof data?.error === 'string' ? data.error : data?.error?.code;
+    const daily = ['user_daily_limit','global_daily_budget','global_daily_limit'].includes(code);
+    const message = code === 'monthly_budget' ? 'El presupuesto mensual de IA está reservado o agotado. El responsable debe revisar el gasto antes de continuar.' : daily ? 'Se ha alcanzado el límite diario de IA. Se restablece a las 00:00 UTC. Conserva tu texto para continuar después.' : response.status === 429 ? 'Hay demasiadas peticiones. Espera un momento y reintenta.' :
       response.status >= 500 ? 'SELF-IA no ha podido completar la petición. Reintenta.' :
       object(data) && (data.message || data.error) || 'No se pudo completar la petición.';
     const error = new Error(message); error.status = response.status; throw error;
