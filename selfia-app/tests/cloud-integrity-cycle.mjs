@@ -30,6 +30,11 @@ try{
    writeTables++;
    const foreignUpdate=await b.sb.from(table).update({user_id:a.id}).eq('user_id',a.id).select('user_id');
    if(foreignUpdate.error)assert.equal(foreignUpdate.error.code,'42501',table+' update denied by permission');else assert.deepEqual(foreignUpdate.data,[],table+' foreign update');
+   // Target only a verified synthetic A row; B must never be able to remove it.
+   const target=own.data[0],targetKey='id' in target?'id':'request_id' in target?'request_id':'user_id';
+   const foreignDelete=await b.sb.from(table).delete().eq('user_id',a.id).eq(targetKey,target[targetKey]).select('user_id');
+   if(foreignDelete.error)assert.equal(foreignDelete.error.code,'42501',table+' delete denied by permission');else assert.deepEqual(foreignDelete.data,[],table+' foreign delete');
+   const preserved=await a.sb.from(table).select('*').eq(targetKey,target[targetKey]).eq('user_id',a.id).single();assert.ifError(preserved.error);assert.deepEqual(preserved.data,target,table+' original row unchanged after foreign update/delete');
    const spoof={...own.data[0],user_id:a.id};if('id' in spoof)spoof.id=randomUUID();if('request_id' in spoof)spoof.request_id=randomUUID();
    const insert=await b.sb.from(table).insert(spoof);
    assert.ok(insert.error,table+' owner-spoof insert must fail');
@@ -44,7 +49,8 @@ try{
  }
  assert.equal((await b.sb.rpc('selfia_erasure_preflight',{p_user:a.id})).error?.code,'42501','erasure operator preflight not callable by app users');
  const anonPreflight=await fetch(config.url+'/rest/v1/rpc/selfia_erasure_preflight',{method:'POST',headers:{apikey:config.key,'content-type':'application/json'},body:JSON.stringify({p_user:a.id})});assert.ok([401,403].includes(anonPreflight.status));
- console.log('PASS HTTP RLS reads for '+tables.length+' user tables; owner-spoof and foreign updates/anonymous writes for '+writeTables+' populated tables; two server-only budget tables private');
+ assert.equal(writeTables,tables.length,'all owner tables need populated synthetic fixtures');
+ console.log('PASS HTTP RLS reads for '+tables.length+' user tables; owner-spoof and foreign updates/deletes/anonymous writes for '+writeTables+' populated tables; original rows unchanged; two server-only budget tables private');
  const profile=await rpc(a.sb,'selfia_declare_profile_item',{p_request:randomUUID(),p_content:'Synthetic independent preference: quiet mornings '+request});
  const contextResponse=await fetch(config.url+'/functions/v1/selfia-context',{method:'POST',headers:{apikey:config.key,authorization:'Bearer '+a.token,'content-type':'application/json'},body:'{}'});
  assert.equal(contextResponse.status,200);const context=await contextResponse.json();assert.ok(context.profile_items.some(item=>item.id===profile.id));

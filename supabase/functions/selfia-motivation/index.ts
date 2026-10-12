@@ -10,7 +10,8 @@ Deno.serve(async(req)=>{
  const token=auth.replace(/^Bearer\s+/,"");
  const sb=createClient(Deno.env.get("SUPABASE_URL")??"",Deno.env.get("SUPABASE_ANON_KEY")??"",{global:{headers:{Authorization:auth}}});
  const {data:{user}}=await sb.auth.getUser(token); if(!user)return json({error:"unauthorized"},401);
- const body=await req.json().catch(()=>({}));
+ let body:any;try{body=await req.json()}catch{return json({error:'invalid_json'},400)}
+ if(!body||typeof body!=='object'||Array.isArray(body))return json({error:'invalid_input'},400);
  const promptType=String(body.prompt_type??"boost");
  const apiKey=Deno.env.get("OPENAI_API_KEY")??Deno.env.get("openai_api_key");
  if(!apiKey)return json({error:"ai_not_configured",message:"Falta la clave de OpenAI en Supabase."},503);

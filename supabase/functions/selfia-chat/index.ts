@@ -13,7 +13,8 @@ Deno.serve(async(req)=>{
  const sb=createClient(Deno.env.get("SUPABASE_URL")??"",Deno.env.get("SUPABASE_ANON_KEY")??"",{global:{headers:{Authorization:auth}}});
  const {data:{user}}=await sb.auth.getUser(token); if(!user) return json({error:"unauthorized"},401);
 
- const body=await req.json().catch(()=>({}));
+ let body:any;try{body=await req.json()}catch{return json({error:'invalid_json'},400)}
+ if(!body||typeof body!=='object'||Array.isArray(body))return json({error:'invalid_input'},400);
  const content=String(body.content??"").trim();
  const requestId=body.request_id;
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
