@@ -68,3 +68,11 @@ La primera comprobación por SDK no alcanzó Supabase: ConnectTimeout antes de H
 Una única solicitud posterior desde la preview aislada glzduispn fue aceptada y mostró el aviso de recuperación. Gmail confirmó un mensaje en INBOX a las18:00:58UTC, asunto Reset your password, remitente SELF-IA, proyecto test tleqdegnzeukonbbrrzk y Received autenticado mediante smtp.gmail.com/TLS1.3. Consulta acotada de auth_logs entre17:59–18:02UTC no devolvió errores. Direcciones personales, IDs del buzón y tokens se omiten de este documento público.
 
 Se abrió únicamente ese mensaje de pruebas y se siguió su enlace: Supabase test, tipo recovery y redirect exacto al alias selfia-continuity-preview. El alias mostró Cambiar contraseña y Guardar contraseña. Verificado el fin del rechazo SMTP previo y la llegada/redirect/pantalla de recuperación. La contraseña nueva de SELF-IA debe introducirla y guardarla el humano; aún pendientes nuevo login, enlace reutilizado/vencido y registro con este proveedor. No se marca F07 completo ni se aprueba beta externa. Gmail personal conserva la advertencia de entrega transaccional del panel; un mensaje recibido no garantiza todos los destinatarios ni una SLA.
+
+## Recuperación completada e inicio de sesión
+
+El usuario confirmó Guardar. SELF-IA mostró Contraseña actualizada. Entra con la nueva contraseña. Se pulsó Entrar con los datos ya escritos por el humano, sin leerlos ni copiarlos: login correcto y pantalla de onboarding existente. Metadatos de Auth confirman cuenta verificada y last_sign_in_at18:39:42UTC. La sesión permanece abierta; no se pulsó cerrar sesión ni se finalizaron autodescripciones por el usuario.
+
+La reutilización del mismo enlace de recuperación se comprobó por HTTP con redirect manual, sin navegar ni alterar la sesión existente: HTTP303 al alias exacto de pruebas, access_denied/otp_expired, sin access_token. Es rechazo de un enlace consumido; no prueba por separado la caducidad temporal de uno no utilizado. El token no se guarda en archivos, repositorio ni informe.
+
+Recorrido de recuperación real ahora PASS para este caso: entrega, enlace, destino, cambio humano e inicio de sesión; reutilización rechazada. Siguen pendientes registro/confirmación con el nuevo proveedor y expiración temporal independiente. El gate AUTH-REAL/F07 se cierra por partes; no implica beta externa aprobada.
