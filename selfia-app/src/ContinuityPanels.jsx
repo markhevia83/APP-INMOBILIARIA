@@ -23,6 +23,12 @@ export function ReviewPanel({event,previous,initialLearning='',stepInvalid=false
  {status==='moved'&&<label>Nueva fecha<input disabled={saving} type="datetime-local" value={date} onChange={e=>setDate(e.target.value)}/></label>}
  {error&&<p role="alert">{error}</p>}<button disabled={saving} onClick={save}>{saving?'Guardando…':'Guardar revisión'}</button><button className="soft" disabled={saving} onClick={onCancel}>Cancelar</button>{history.length>0&&<details><summary>Historial de resultados ({history.length})</summary>{history.map(r=><article key={r.id}><small>{new Date(r.created_at).toLocaleString('es-ES')} · {r.supersedes_id?'Corrección':'Intento registrado'}</small><p>{RESULT_LABELS[r.status]}</p>{r.result_note&&<p>Resultado: {r.result_note}</p>}{r.learning&&<p>Declaración de este intento: {r.learning}</p>}{r.next_step&&<p>Siguiente paso: {r.next_step}</p>}</article>)}</details>}</section>
 }
+export function DeleteMemoryButton({memory,onAction}){
+ const [confirm,setConfirm]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ const inFlight=useRef(false);
+ async function erase(){if(inFlight.current)return;inFlight.current=true;setBusy(true);setError('');try{await onAction(memory,'erase');setConfirm(false)}catch(e){setError(e.message)}finally{inFlight.current=false;setBusy(false)}}
+ return <div>{confirm?<><p>Eliminará el contenido de este recuerdo, sus versiones y el aprendizaje de origen. Conservará las conversaciones y resultados originales, pero excluirá sus textos relacionados del contexto de SELF-IA. También retirará las propuestas de motivación anteriores. Se conservarán referencias sin contenido para evitar reutilizarlo. No elimina copias de proveedores.</p><button disabled={busy} onClick={erase}>{busy?'Eliminando…':'Eliminar contenido y versiones'}</button><button disabled={busy} onClick={()=>setConfirm(false)}>Conservar recuerdo</button></>:<button onClick={()=>setConfirm(true)}>Eliminar recuerdo</button>}{error&&<p role="alert">{error}</p>}</div>;
+}
 export function MemoryCard({memory,onAction,onTrace}){
  const [editing,setEditing]=useState(false),[text,setText]=useState(memory.content),[busy,setBusy]=useState(false),[error,setError]=useState('');
  const act=async(action)=>{setBusy(true);setError('');try{await onAction(memory,action,text);setEditing(false)}catch(e){setError(e.message)}finally{setBusy(false)}};
@@ -32,7 +38,7 @@ export function MemoryCard({memory,onAction,onTrace}){
  {editing?<><button disabled={busy||!text.trim()} onClick={()=>act('correct')}>Guardar corrección</button><button onClick={()=>setEditing(false)}>Cancelar</button></>:<>
  {!(['confirmed','update'].includes(memory.status)&&['confirmed','corrected'].includes(memory.user_validation))&&<button disabled={busy} onClick={()=>act('confirm')}>Confirmar</button>}
  <button disabled={busy} onClick={()=>setEditing(true)}>Corregir</button><button disabled={busy} onClick={()=>act('obsolete')}>Ya no aplica</button><button disabled={busy} onClick={()=>act('dontuse')}>No volver a usar</button></>}
- <button onClick={()=>onTrace(memory)}>Ver origen e historial</button></div>{error&&<p role="alert">{error}</p>}</article>
+ <button onClick={()=>onTrace(memory)}>Ver origen e historial</button></div><DeleteMemoryButton memory={memory} onAction={onAction}/>{error&&<p role="alert">{error}</p>}</article>
 }
 export function Planner({onDiscover,onSchedule}){
  const [vibe,setVibe]=useState('tranquilo'),[city,setCity]=useState(''),[data,setData]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[chosen,setChosen]=useState(null),[date,setDate]=useState(localDate()),[time,setTime]=useState('18:00'),[saved,setSaved]=useState(false);

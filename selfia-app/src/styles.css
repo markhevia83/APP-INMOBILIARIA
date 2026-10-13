@@ -6,3 +6,6 @@
 .chatbox{padding-bottom:130px}.newSubject{margin-bottom:10px;padding:9px 12px;border-radius:12px;background:#e4f4f8;color:#146079}
 
 .chatText p{margin:0 0 10px;white-space:normal}.chatText p:last-child{margin-bottom:0}.chatText ul,.chatText ol{padding-left:22px;margin:8px 0}.agendaBody p{white-space:pre-wrap;overflow-wrap:anywhere}.agendaBody a{display:inline-block;padding:10px 0;color:#087b91}
+
+/* Readable inputs prevent automatic zoom when the mobile keyboard opens. */
+@media(max-width:619px){input,select,textarea{font-size:16px!important}.navCore{bottom:max(8px,env(safe-area-inset-bottom))}.app{padding-bottom:calc(110px + env(safe-area-inset-bottom))}.formCard,.memoryCard{scroll-margin-bottom:120px}.composer{bottom:calc(88px + env(safe-area-inset-bottom))}.agendaItem{grid-template-columns:54px minmax(0,1fr)}.agendaItem>button{grid-column:1/-1}.msg{overflow-wrap:anywhere}}

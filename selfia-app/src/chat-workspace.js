@@ -7,16 +7,17 @@ export function createChatWorkspace(storage) {
   const blank = (area = '', link = {}) => ({area, link, conv:null, messages:[], draft:'', busy:false, pending:null});
   const persist = () => {
     if (!storage || !owner) return;
-    try { storage.setItem('selfia-chat-'+owner, JSON.stringify([...contexts].map(([k,v]) => [k,{...v,busy:false}]))); } catch {}
+    try { storage.setItem('selfia-chat-active-'+owner,active);storage.setItem('selfia-chat-'+owner, JSON.stringify([...contexts].map(([k,v]) => [k,{...v,busy:false}]))); } catch {}
   };
   return {
     setOwner(id) {
       if (id === owner) return;
       this.clear(); owner = id;
       try { contexts = new Map(JSON.parse(storage?.getItem('selfia-chat-'+id) || '[]')); } catch { contexts = new Map(); }
+      try{const saved=storage?.getItem('selfia-chat-active-'+id);if(contexts.has(saved))active=saved;}catch{}
       for(const state of contexts.values())if(state.link.goal_id||state.link.commitment_id||!state.route)state.route=routeFor(state.area,state.link);
     },
-    clear() { if (owner) storage?.removeItem('selfia-chat-'+owner); owner=null; contexts.clear(); active=''; epoch++; },
+    clear() { if (owner){storage?.removeItem('selfia-chat-'+owner);storage?.removeItem('selfia-chat-active-'+owner);} owner=null; contexts.clear(); active=''; epoch++; },
     open(area='',link={situation_id:null,goal_id:null},fresh=false,initialDraft='') {
       const route=routeFor(area,link);
       active=fresh ? route+crypto.randomUUID() : [...contexts].reverse().find(([key,value])=>value.route===route)?.[0]||route;
@@ -24,6 +25,7 @@ export function createChatWorkspace(storage) {
       else {if(link.situation_id||link.goal_id||link.commitment_id)contexts.get(active).link={...link};persist();}
       return contexts.get(active);
     },
+    invalidateHistory() { epoch++;for(const state of contexts.values()){state.messages=[];state.pending=null;state.busy=false;}persist(); },
     current() { return contexts.get(active); },
     patch(change) { Object.assign(this.current(),change); persist(); return this.current(); },
     begin(content) {

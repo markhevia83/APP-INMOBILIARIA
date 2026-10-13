@@ -5,7 +5,7 @@ import {resolve} from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 const root=fileURLToPath(new URL('../../',import.meta.url));
-const allowed=new Set(['chat','daily','motivation','discover','operations','erasure-drill']);
+const allowed=new Set(['context','chat','daily','motivation','discover','operations','erasure-drill']);
 const readable=process.argv.includes('--readable');
 for(const name of process.argv.slice(2).filter(x=>x!=='--readable')){
  if(!allowed.has(name))throw Error('Unknown test function');
