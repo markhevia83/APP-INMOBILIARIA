@@ -1,0 +1,333 @@
+{
+  "date": "2026-10-11",
+  "status": "internal_candidate_not_approved_for_external_beta",
+  "repository": "markhevia83/APP-INMOBILIARIA",
+  "code_commit": "875b1cdc5ef62b9b213a4cf8f56e0ba8f881f661",
+  "release_commit_note": "The containing Git commit may add documentation only; verify its SHA through Vercel gitSource/meta and compare source hashes to code_commit.",
+  "source_branch": "selfia-audit-p0-onboarding",
+  "preview_branch": "selfia-continuity-preview",
+  "vercel_project": "self-ia-mobile",
+  "test_supabase": "tleqdegnzeukonbbrrzk",
+  "production_supabase_must_not_be_changed": "hhbipvgusfhpcbdifxyy",
+  "audit_source_sha256": "e9c3658e6f3cf04ed0669ad058a485bf2405c236c2edd193e240c1943194f5aa",
+  "feature_limits": {
+    "voice": "disabled unless explicitly verified and enabled",
+    "timed_venue_or_event_plans": "excluded",
+    "erasure": "Hosted Auth Admin deletion verified only for a NEW disposable account with all 22 owner tables; real requests remain pending. Provider/backup retention and future Storage deletion not certified.",
+    "ai_budget": "75 USD/calendar month UTC, conservative app-only reservation guard active in test; invoice cap and delivered alerts unverified; pricing review required before 2026-11-11"
+  },
+  "checks": {
+    "local_node_tests": {
+      "passed": 32,
+      "failed": 0
+    },
+    "local_react_browser": "passed; mobile+desktop; real PGlite SQL/RLS; synthetic Auth/model; no external requests",
+    "deno_auth_handler": "passed; anon and invalid token in-process; not real HTTP",
+    "deno_discover_privacy": "passed; only explicit search choices sent, no personal context queries",
+    "build": "passed",
+    "dependency_audit": "zero known findings",
+    "hosted_sql": "passed test-only synthetic transaction; rolled back",
+    "rls_public_tables": 25,
+    "real_auth_http_concurrency_model": "PASS real Auth sessions A/A2, simultaneous idempotent agenda writes, local logout preserving A2/B; all 22 populated owner tables REST foreign reads/updates/deletes, original rows unchanged, spoof INSERT and anonymous writes; six anonymous/invalid-token Edge guards. Signed expired JWT, physical devices/network cuts remain pending.",
+    "external_beta": "not approved; see remediation checklist",
+    "deno_chat_provenance": "passed on local corrected handler; synthetic backend/model; keeps independent declaration and excludes withdrawn/legacy facts",
+    "independent_browser": "Astra PASS preview rb27puzf8/09cec39 with B: login/reload/drafts/independent preferences excluding withdrawn memories/evolution; turn01a13124-d7e6-75c3-a086-4c83f45d828b. No regressions in sample, no SMTP test or external beta approval. Observed before input-only backend repair.",
+    "deno_server_preflight": "10 passed: Auth guards, malformed inputs, safe provider errors and daily/monthly denial, money guard, provenance, search privacy, operations privacy/alerts, disposable erasure guards.",
+    "real_model_f09_retest": "PASS independently observed by Astra with B, second explicit declaration and correction/withdrawal; broader semantic coverage remains limited.",
+    "owner_sql_matrix": "PASS all 22 owner tables: foreign SELECT/UPDATE/DELETE, owner-spoof INSERT, anon SELECT; brain configuration hidden. SQL roles, not HTTP JWT.",
+    "hosted_owner_links": "Missing profile/onboarding link guards reproduced and repaired in test database; foreign references rejected and legitimate inserts accepted in rolled-back synthetic transaction.",
+    "f02_reopen_repair": "PASS local React and independent Astra reopen/reload/empty draft/pause/action/subject; concrete reproduction closed.",
+    "money_guard_sql": "PASS deployed test-only transaction: reservation, settlement once, cap denial before capacity; rolled back. service_role reserve/settle also passed with rollback. Concurrency HTTP and invoice reconciliation pending.",
+    "security_advisors": "Known leaked-password WARN persists; two RLS-no-policy INFO are intentional deny-all server-only budget tables, client grants revoked. No protections reduced.",
+    "real_email_auth": "PASS one full Gmail recovery: saved/reloaded test SMTP, real INBOX receipt18:00:58UTC, exact stable test alias, human password update, UI success, login18:39:42UTC and verified Auth metadata. Consumed recovery link HTTP303 access_denied/otp_expired without access_token using manual redirect; existing browser session unchanged. Temporal expiration of unused link and signup/confirmation with Gmail provider pending; F07 not wholly closed.",
+    "money_guard_real_model": "PASS one synthetic chat independently observed by Astra in preview33c0071/chat15, turn01a12fdb-7ae1-7460-af58-78498fe79478; SQL metadata corroborates completed chat1697 input/124 output tokens. No real exhaustion/concurrency/invoice verification.",
+    "live_model_cycle": "PASS full real situation/action/agenda/partial outcome/learning/corrected memory/adapted chat/withdrawal/later chat; structured daily plans and foreign context rejection. Narrow synthetic semantic coverage.",
+    "restore_drill": "PASS isolated synthetic PGlite dump/load, all 25 table snapshots equal, owner isolation, withdrawal/correction, idempotency and monetary reservations preserved. Provider recovery/whole release rollback pending.",
+    "erasure": "PASS actual test Auth Admin: new disposable identity, 22 populated owner tables, revoke only its sessions, delete and verify no residual rows/Auth, stale identity/write denied, A alive; all 22 B snapshots identical. Zero disposable accounts remaining, zero Storage buckets/objects. Provider retention not certified.",
+    "openai_test_key_validity": {
+      "name": "SELF-IA Pruebas",
+      "status": "Active",
+      "expires": "2026-10-13",
+      "verified": "2026-10-12",
+      "scope": "Human-authorized UI metadata only; no revealed/copied/modified secret; renewal pending"
+    },
+    "malformed_input_http": "Reproduced chat null body HTTP500; repaired four handlers. PASS 25 real authenticated malformed HTTP requests across chat/daily/motivation/discover/onboarding, no added ai_usage/conversation/message/mutation rows. Normal cloud cycle and live model response PASS after repair.",
+    "smtp_provider": "Gmail personal, smtp.gmail.com465; human authorized app credential storage only in test for registration/recovery; never read/copied by agent. Supabase personal-versus-transactional deliverability warning retained, not a launch SLA.",
+    "real_recovery_link_reuse": "PASS consumed link rejected by actual test Auth HTTP, exact test redirect and no access token. Does not certify temporal expiration or malformed-link frontend UX.",
+    "operations": "PASS real responsible account UI aggregate metrics and capacity warning; hosted anonymous/invalid401, synthetic non-operator403 for real/drill, direct client RPC denied; simulated alert delivery is clearly labelled and does not write state. No out-of-browser delivery or invoice cap verification.",
+    "live_safety": "Seven initial synthetic cases passed mechanically before telephone-locale correction. New crisis/dependency/unverified belief/abuse passed without inferred phones; final medical/minor/context-injection reruns blocked by actual global daily budget (974/1000 units). No limit bypass. Independent semantic review pending; not clinical certification.",
+    "privacy_contact": "Human-confirmed responsible person MARCO ANTONIO HEVIA LOPEZ, Spain, public support/rights email markhevia@gmail.com. Published informational page with launch gates; complete legal/retention/provider policy still pending.",
+    "urgent_help": "PASS local browser quota429 with crisis draft: urgent help visible without model, draft preserved, offline help visible, no new receipts/memories. PASS deployed stable preview onboarding expansion; final bundle includes help and terminalReason. This does not claim new chat server support_message is active.",
+    "terminal_retry": "PASS request identity/draft preserved; terminal retry_limit refusal survives reload and cannot silently create a new attempt. Frontend explanation no longer encourages immediate retry.",
+    "independent_safety_review": "Astra turn01a131a0-9623-7cb1-aed6-3aa2cfffae33: P1 no model-independent urgent help, P1 abuse key/location advice missing escalation planning, P2 retry-limit UI. Client help/retry repaired and tested; abuse prompt repaired in source/daily16/motivation16, final chat deployment still blocked. Follow-up requested, not approved for external beta. Astra follow-up turn01a131b1-5014-7b52-8956-7a6113908ba3: READY, help accessible without session, chat error/retry3/3 pass and proposed abuse rule correct. New P2 onboarding retry/reload reproduced independently, repaired in fc6b766 and browser/unit tested; next review requested.",
+    "signup_confirmation": "PASS NEW synthetic Gmail-plus alias routed to authorized mailbox: actual Auth user created/confirmation sent; INBOX received20:01:56UTC; verify303 issues token to exact stable redirect; passwordlogin200 confirmed; reused link otp_expired without token; both new-identity sessions locally revoked204. Initial transport timeout and resend429 not counted as creation failure: Auth/mail evidence resolves unknown outcome. No credentials/links stored in files. Temporal unused-link expiration remains pending.",
+    "onboarding_terminal_retry": "PASS account/tab-scoped sessionStorage request UUID/draft/terminalReason survives reload, zero resends after terminal retry_limit, explicit edit starts new request, new text while response arrives retained, logout/account change discards draft and stale response. Real React local browser + unit fixtures, no external model.",
+    "test_harness_clock": "Full suite initially exposed nondeterministic fixture: two wall-clock reads could exceed the SQL max30min expiry by1ms. Production discover already derives both times from one instant. Fixture aligned to that implementation; full32 rerun passes. No relaxation of SQL bound.",
+    "independent_onboarding_retry": "PASS Astra turn01a131bd-82c8-7c91-9c80-4cdd0437ecb5:2 selected tests and local reproducer;1 initial request/no resend after reload, explicit edit permitted; fc6b766 READY. No model or B changes. Coverage-limited closure, not beta approval.",
+    "hosted_urgent_quota": "PASS actual Auth A, existing own conversation: global_daily_budget429 returns country-neutral urgent support_message, no added messages/memories, local A signout only. Initial transport failure and incorrect test sorting column were corrected; successful full rerun, no model/limit bypass."
+  },
+  "source_sha256_git_blob": {
+    "selfia-app/.env.example": "408e7137d558890f3b0dca3d66755496445aced203c058cbb89b93971031b18b",
+    "selfia-app/index.html": "fb49241cf2d1b8e411092985216e427e08f8003ff06e54872f4e0a38372b32fb",
+    "selfia-app/operations.html": "8942ac2d25ed93f3024e20f7d183476e052ef4a53929e6c5d51adc327dffda25",
+    "selfia-app/package.json": "256df1a06009ccab6abfd9fecdef6d6287cd61b0afcae61811fa034264fd1b24",
+    "selfia-app/pnpm-lock.yaml": "25f451a02e203864aed3105ae88094c9a7997242b4548d96a9387114120f76e4",
+    "selfia-app/pnpm-workspace.yaml": "6ef0ac8a07895b4ffcc207322095ce428bc1153ae8bd29a3694dce2d0e5ac43d",
+    "selfia-app/privacy.html": "e5aef69919843d44a3db9581f8023ecdb285e07bffb90592393b5a64eedb3075",
+    "selfia-app/scripts/bundle-test-functions.mjs": "ce7bcf159550a136d99e7689b3265c3546faa264b5e055b85db71881bf13020a",
+    "selfia-app/scripts/test-erasure.mjs": "a052345a1295f31360b56611aaf1263da4d27d5b2bd2c6a137946d1ded7dd453",
+    "selfia-app/src/ChatText.jsx": "4722cc2cea9591d56ea13e637e244a501b9e5bbe7d50445391c668ece1e3f5ec",
+    "selfia-app/src/ContinuityPanels.jsx": "52bb79a430a7666994ed35d5cd5e566ec01b449517fa5b9004cd4c4c078863f8",
+    "selfia-app/src/UrgentHelp.jsx": "604ab011e169db84d1973a11578c8a815d1cab750c7c0aa14c4a77275f614dc5",
+    "selfia-app/src/api-protocol.js": "f60bedc3231d3ffedebf2cdbd8553b118c340713473e8aaf84493d2e522add6b",
+    "selfia-app/src/chat-workspace.js": "d0afd1b707516b6fafadd4c9046852d56479866d884657a54749c2129527bd7d",
+    "selfia-app/src/continuity.js": "da08dee4585b00e77014302bea9b1872041a5d0c9b003c05a082c1d6f36d2054",
+    "selfia-app/src/main.jsx": "f50ed3f33abd64e21aed0dccbbf7588840aa92e4fcefa2bac1827bd0f02957ff",
+    "selfia-app/src/onboarding-requests.js": "6eef568b8c0cf3f573e8ad021c783ea2736dc35cd07d6b057c1aa4ba5d5ea383",
+    "selfia-app/src/operations-page.js": "81dc43ccff0b7a2222d11e99f8001d6544e24dbbbd3cc6469293f4c60d38a0b0",
+    "selfia-app/src/styles.css": "f2ce733a3f496bc35810e409b97d68aa5c76e90deff8d9b80cc9a72f2021b871",
+    "selfia-app/tests/astra-repairs.test.mjs": "55298c032177f27eb5b08053ee7642fb64fc28d041497357b2efe862984012fd",
+    "selfia-app/tests/audit-integrity.test.mjs": "e6ba0ade72e5ad88073aa49d56ff70a9fb7f1276ec443cd58c7ef50984780232",
+    "selfia-app/tests/baseline.sql": "c88ccbcbd229de0f3790b1b3786c3a2e53c14f7120821fb1714c6ae0f725d7f6",
+    "selfia-app/tests/beta-isolation.test.mjs": "e59a03b937e5234b5421d944517bb3be9b19ba3a8736cc10918703a5416c3c2b",
+    "selfia-app/tests/browser-cycle.mjs": "310396af96c6ada63f327086aba69901d7386fba619ecac6059f29e68e6da8b9",
+    "selfia-app/tests/cloud-cycle.mjs": "7e64f735cf87ac1bd7671a6e4c4ba5767fbb4ea9a62c1300c7810b3a713f06ca",
+    "selfia-app/tests/cloud-erasure-cycle.mjs": "5cf53f369ba746f6dc3afea9d7e2f1c4d1218d418d58ec58800b8c6a972a914b",
+    "selfia-app/tests/cloud-input-validation.mjs": "cef19b6f4213cb7316b4a78b64d1ff7099b062c2fd6ace512c5fb3ac4708bed3",
+    "selfia-app/tests/cloud-integrity-cycle.mjs": "4dd7fb4d74ab7c538a7133fd808198b2d7b277dac84224b972563eba58f156fa",
+    "selfia-app/tests/cloud-operations-cycle.mjs": "4437a5a877c8d7c55ad9bd1c9f7769f4bc4b5577103546f71db9c1fd4e6bc1dd",
+    "selfia-app/tests/cloud-urgent-cycle.mjs": "b6afd9b567e1294c5f59937a739273bd4735e1b6ea2c495115c26e67b83a9379",
+    "selfia-app/tests/continuity.test.mjs": "74b40782e47ba12c90b8e0a63369df7b250ab795b16b4148c5a99c1f0010cdb7",
+    "selfia-app/tests/erasure.test.mjs": "1d9d94b3b64032998520e16b9d7d81a49f462fdd52e9aa7ad8d8595a8370934d",
+    "selfia-app/tests/followup-context.test.mjs": "7f7bfbb949301093b516e28dbb8a39d3e7955895f9550ba454545b035abd58b4",
+    "selfia-app/tests/live-followup.mjs": "10b505cd6046bb4a9c7f83a17e95b1bf0ad4e9e1cc22c8d21d94709dafa0d9e9",
+    "selfia-app/tests/live-model-cycle.mjs": "aa9b1072d86cb4364e10367ca743a10df86a18daaadeb45c7580026a0fa45f83",
+    "selfia-app/tests/live-plans.mjs": "3e6cc07d7b046e46f4e69aebecf5cb6cdc1b117d410aa0420940928be69eb8f2",
+    "selfia-app/tests/live-safety-cycle.mjs": "d0b7fe6c32e0bdbf97b9e7cc49d37974d54b7088218c67f98103a5698ae8d637",
+    "selfia-app/tests/money-budget.test.mjs": "9aabbec2715e79c23ef7e861ccaaeae5b6dcfd89d212f806918a2869bdd57b7f",
+    "selfia-app/tests/operations.test.mjs": "4631189342e3e69f3e1d35a8a0ea36aad2f2114a3abcba16adad6c8a9d674a56",
+    "selfia-app/tests/restore-drill.test.mjs": "7b846767ae0aea03128b1a5dfb8c188c5699dc66022b94af6a4b10026ec63aca",
+    "selfia-app/vercel-trigger.txt": "059f5a5f860259516b996cf8009d19b9bcb7030cd9e3913d5f0a6afc242a05d9",
+    "selfia-app/vite.config.js": "1dc25bdd689e70bbf805c1c78f136149cef6f935fe28da9f188a1f36607b3554",
+    "supabase/config.toml": "7f5d6d5047954ffdd5f9d5c711efdd3cd0624b79aecaffdf42ed7f37be2c0a89",
+    "supabase/functions/_shared/ai-errors.ts": "f1c5e2d90748da1aed3fd98a401a86c2d2689263d550397b7f736936b122453d",
+    "supabase/functions/_shared/ai-pricing.ts": "e595014352fa757da1c6967f8b0cafc9fd700e2f184e32318e963a9ae8a7b2e1",
+    "supabase/functions/_shared/ai-request.ts": "e3a63804a5b0a85d60498bb29470c91d363199fcd00c037d42790366049c33a6",
+    "supabase/functions/_shared/continuity.ts": "51306d6f333ae466ac3ab49c885b8165f7dfe611ecc80b1e8999f2f8522a8a6b",
+    "supabase/functions/_shared/load-context.ts": "88cf759aafb8d023c1233742b683587283ea0a0ec7db2381e78b49a8173c2685",
+    "supabase/functions/_shared/operations.ts": "8ce2e8adfb55b8486beea60785a61bdfdc4520ed77e4dc0fc2cc1bbbaec15d67",
+    "supabase/functions/_shared/plan-timing.ts": "7f0a38ae7a7cda675604cde26831f86d49a4f81329a7d17e3aefdb8284aca9a9",
+    "supabase/functions/_shared/profile-provenance.ts": "42a943b765f7ce63c1bdcc2974ea32b467fdf4edd54ab3f11dbb82d270247ea3",
+    "supabase/functions/_shared/safety-rules.ts": "4bd6bb7194f3f1307980e282e7c17911ea15fc30c7ab234a0c619596f32ecd18",
+    "supabase/functions/_shared/urgent-support.ts": "7f7481f6613fb2868bb831dea425783f7c34d57f648efdbeaf36564d0b208680",
+    "supabase/functions/selfia-chat/index.ts": "32380af41393ec69102a35b556de73a06e09800ddf1bb3843e51713db5572e56",
+    "supabase/functions/selfia-context/index.ts": "680388ff25ee5d714327954e10f549c05a813243d55de6373e7b624823f05052",
+    "supabase/functions/selfia-daily/index.ts": "c997ad0801c427b264e3cae10a469aa04d7debbe3c3c8d18a93ec5e9ace610f6",
+    "supabase/functions/selfia-discover/index.ts": "ff6ac17745c88be2cd24977bd328b9d8e47df0cff3070d1ea67336d773bd87c9",
+    "supabase/functions/selfia-erasure-drill/index.ts": "4bee4a3d44ffa37f52a7e70dabf76ccaba718dd90d4f33606a3ecc642ad00786",
+    "supabase/functions/selfia-motivation/index.ts": "87f592ea2fa13d6687e3a3bf9002f020e2e42faffae88c4b5a19655e73d984fc",
+    "supabase/functions/selfia-onboarding/index.ts": "c941aabec166810284a07b8eacd122b4d9d416a2a7d27bff7e87dc8c89028ebf",
+    "supabase/functions/selfia-operations/index.ts": "ee31e072de4fccd477b75a8554e3c265c3e3531df8b6f5fef84c8b4800551ac4",
+    "supabase/migrations/20261006142249_continuity_cycle.sql": "e1205fb15d47378cc90e82d994d9fdfff59489e95f7506b149b4573d0e6b2f22",
+    "supabase/migrations/20261008143624_astra_continuity_repairs.sql": "7c302af00b26a18f115fd763dc7b8df99534a4ed620309ee5c5ee476c1bb3a64",
+    "supabase/migrations/20261008182709_audit_followup_context.sql": "e2ad3ef582236280a3cc6d3578759949a22b93303b572c4ec21ea324474ade1f",
+    "supabase/migrations/20261011161012_audit_integrity.sql": "fc155f671a924087d0c8dc903f420231b732c2a2e54425e1d246003f4ccb6af4",
+    "supabase/migrations/20261011162101_audit_provenance_plans.sql": "0652169c8fef98e180778c38feb49baa8e19afe83d676950b16e2f94add62ae2",
+    "supabase/migrations/20261011163621_audit_ai_operations.sql": "3fece1825ab4404dcc652ee551aa5fc49390977e63394f53e4beb411a32c3d55",
+    "supabase/migrations/20261011164245_audit_privacy_requests.sql": "2a5778b77825731f3fb8636efecd6ab53bfcf8511d35818c553aee605a09a209",
+    "supabase/migrations/20261011174000_audit_schedule_coherence.sql": "af910301b9c6b61ccd8e9558ab310bef969d07441cb920e996a83418a8f8d413",
+    "supabase/migrations/20261011174800_audit_link_indexes.sql": "7af3deb0184c08ecdcf2edbe5699552ea6d6da55ea4f7dc3fd527268b4bc5a30",
+    "supabase/migrations/20261011175300_audit_action_source_index.sql": "2a18712c52c7a97cabf7725f5d669dc6e81c9baa8ee9227d5694064a42674bf5",
+    "supabase/migrations/20261012020000_beta_owner_links.sql": "ea0ec0f9c03c2e5db7ed1930ec89096122bcde0ccf374cded099307d665b3a7e",
+    "supabase/migrations/20261012120000_beta_money_budget.sql": "c547ca687c655908094adaab98beb55072f136fc545aba5b36e9917f03706d70",
+    "supabase/migrations/20261012170045_beta_erasure_cascade.sql": "8f61e93a8e42c7865931ff5265e960e2f045abc16337b8aea87c74f4a406d654",
+    "supabase/migrations/20261012190317_beta_operations_snapshot.sql": "cf5580ec15a552fac730d3fca5a718353087344bb941aba567fbb91b30829721",
+    "supabase/migrations/20261012192600_beta_operations_daily_capacity.sql": "51ec0e3ca54a7a329de35caa8432bcf07c13612aaf6261f574a037d8dc024a67",
+    "supabase/tests/ai-money.test.ts": "b612e23947efdd51ef0c945fc4a4638f76b29f8d7d001ea7fcfd7809457efd89",
+    "supabase/tests/auth-runtime.test.ts": "4b4a8a0c114eaa81deb1f5e34155b18c43fff55a62c28db439e66e3df28cbd68",
+    "supabase/tests/chat-provenance.test.ts": "4cb9d14ad5c84dff8d74d2ab1aa48714f0b117340ae43ef5599a8c8fca5486ed",
+    "supabase/tests/discover-privacy.test.ts": "e81fcfe42c296b205b47e2b069ea6d2555b0f2b107781d3e409c0ae1133a01b2",
+    "supabase/tests/erasure-drill.test.ts": "94cd34679c1219c54d67be7ba757f6611d898373f62f366b888069efbde0dc2b",
+    "supabase/tests/input-validation.test.ts": "f543c14b0ec88d548e36d956b31f3db34b77ced701fc8a0029a5f890178da4af",
+    "supabase/tests/operations.test.ts": "55b2b38ee7ee776e0eaac8483ad3bb01749537d02a0da245b9084b4591984695",
+    "supabase/tests/provider-errors.test.ts": "b78c1fb6afe268b9b121f86049f4a1a1fb4acdb2b6df89eb90de22d2c6710121"
+  },
+  "edge_functions": [
+    {
+      "name": "selfia-chat",
+      "version": 21,
+      "status": "ACTIVE",
+      "ezbr_sha256": "5289eb4182ce68c0a213a33ce0ff679fe229d26dd056dd043158f6f1933149b2",
+      "entrypoint": "index.js",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-context",
+      "version": 10,
+      "status": "ACTIVE",
+      "ezbr_sha256": "e6da525a08d38b28edb712eef90f27845b2612f719077f8e8330416a657f10e5",
+      "entrypoint": "selfia-context/index.ts",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-daily",
+      "version": 16,
+      "status": "ACTIVE",
+      "ezbr_sha256": "f71629327567cc78d3999e1cbf8232789873dd3c321b3d4fb38dc287893d67c7",
+      "entrypoint": "index.js",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-motivation",
+      "version": 16,
+      "status": "ACTIVE",
+      "ezbr_sha256": "27ade879de1f809864592265fd09fa92f8251316efea82143460d823ca8dd30f",
+      "entrypoint": "index.js",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-discover",
+      "version": 14,
+      "status": "ACTIVE",
+      "ezbr_sha256": "23677286db8251a47151d17e008d0b97e4112c5dc02bf7e1aec74730a9429e1c",
+      "entrypoint": "supabase/functions/selfia-discover/index.ts",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-onboarding",
+      "version": 6,
+      "status": "ACTIVE",
+      "ezbr_sha256": "ba89748902e1d25afbfb44a8592308d5ddc1ce94387758c695e0f488861b7dc6",
+      "entrypoint": "selfia-onboarding/index.ts",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-operations",
+      "version": 3,
+      "status": "ACTIVE",
+      "ezbr_sha256": "66dbff5087de139f966eb90ebc1a8f04433e9e6454a600baa5779635914c0d60",
+      "entrypoint": "index.ts",
+      "verify_jwt": false
+    },
+    {
+      "name": "selfia-erasure-drill",
+      "version": 1,
+      "status": "ACTIVE",
+      "ezbr_sha256": "b6e2097dac583d4f08a01a9ecd0841592fd0d1a76ed3e903f2223907a665c2a6",
+      "entrypoint": "index.js",
+      "verify_jwt": false
+    }
+  ],
+  "remote_migrations": [
+    {
+      "version": "20261006152742",
+      "name": "restore_selfia_schema_for_isolated_tests"
+    },
+    {
+      "version": "20261006152757",
+      "name": "continuity_cycle"
+    },
+    {
+      "version": "20261008145026",
+      "name": "astra_continuity_repairs"
+    },
+    {
+      "version": "20261008183507",
+      "name": "audit_followup_context"
+    },
+    {
+      "version": "20261011162805",
+      "name": "audit_integrity"
+    },
+    {
+      "version": "20261011162813",
+      "name": "audit_provenance_plans"
+    },
+    {
+      "version": "20261011164846",
+      "name": "audit_ai_operations"
+    },
+    {
+      "version": "20261011164856",
+      "name": "audit_privacy_requests"
+    },
+    {
+      "version": "20261011170043",
+      "name": "audit_schedule_coherence"
+    },
+    {
+      "version": "20261011170500",
+      "name": "audit_link_indexes"
+    },
+    {
+      "version": "20261011170616",
+      "name": "audit_action_source_index"
+    },
+    {
+      "version": "20261012102426",
+      "name": "beta_owner_links"
+    },
+    {
+      "version": "20261012111144",
+      "name": "beta_money_budget"
+    },
+    {
+      "version": "20261012170608",
+      "name": "beta_erasure_cascade"
+    },
+    {
+      "version": "20261012190745",
+      "name": "beta_operations_snapshot"
+    },
+    {
+      "version": "20261012192652",
+      "name": "beta_operations_daily_capacity"
+    }
+  ],
+  "pending_edge_deployments": [],
+  "source_alignment_note": "Final runtime preview fc6b766 READY; later commits change fixture/tests/docs only. Chat21 ACTIVE updated package hash5289eb with abuse escalation-planning rule and urgent error support; hosted daily-quota crisis test PASS. Daily16/motivation16 include same rule; ops3/erasure-drill1 unchanged. Deployment errors recovered after bounded packaging alternatives and later recheck; root cause not established. Abuse/model semantic rerun still pending because daily guard is nearly exhausted; not beta approved.",
+  "last_updated": "2026-10-12",
+  "authorizations": [
+    {
+      "date": "2026-10-12",
+      "scope": "test only; deploy chat repair sending relevant messages, explicit declarations, confirmed memories, situations, goals and actions to OpenAI, excluding withdrawn memories",
+      "human_reply": "Sí, autorizo ese envío en pruebas"
+    },
+    {
+      "date": "2026-10-12",
+      "scope": "75 USD monthly IA budget for test beta; no infrastructure purchases; real mailbox shared only with existing Astra test chat for access/authentication-message coordination",
+      "human_reply": "75 US$/mes de IA; Sí, para esa prueba de acceso"
+    },
+    {
+      "date": "2026-10-12",
+      "scope": "Connect chosen personal Gmail in test Supabase, storing human-created Google app password only for SELF-IA registration/recovery; human direct entry and submission; no purchases, production or Google primary-password changes",
+      "human_reply": "Sí, conectar Gmail en pruebas"
+    },
+    {
+      "date": "2026-10-12",
+      "scope": "Only responsible account may view aggregate operations in test; no conversations or limit mutations",
+      "human_reply": "Sí, habilitar mi panel privado"
+    },
+    {
+      "date": "2026-10-12",
+      "scope": "Responsible natural person full name, Spain and markhevia@gmail.com publicly shown as support and data-rights contact",
+      "human_reply": "yo como persona, MARCO ANTONIO HEVIA LOPEZ; Sí, España y ese correo de contacto"
+    }
+  ],
+  "test_auth_urls": {
+    "site_url": "https://self-ia-mobile-git-selfia-continuity-preview-self-ia.vercel.app",
+    "exact_redirects": [
+      "https://self-ia-mobile-oid9f4y0d-self-ia.vercel.app",
+      "https://self-ia-mobile-git-selfia-continuity-preview-self-ia.vercel.app"
+    ]
+  },
+  "verified_preview": {
+    "url": "https://self-ia-mobile-i1g121w5c-self-ia.vercel.app/",
+    "deployment_id": "dpl_4BzH4j4v3fcHw9zDhqh8d488hgXk",
+    "sha": "fc6b766c8ae12a258bc1697779370028fab42af2",
+    "target": "preview",
+    "state": "READY",
+    "runtime_source_note": "b62a14f differs only in tests/audit-integrity.test.mjs; functional source identical to this preview. Protected frontend source and onboarding helper verified separately.",
+    "browser_smoke": "Urgent help and operator panel observed on prior same-safety frontend; next independent onboarding retest requested. Full hosted model semantic rerun still pending."
+  }
+}

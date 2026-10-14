@@ -1,0 +1,4 @@
+overrides:
+  vite>esbuild: 0.28.1
+allowBuilds:
+  esbuild@0.25.12 || 0.28.1: true

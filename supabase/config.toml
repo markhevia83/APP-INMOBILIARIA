@@ -1,0 +1,28 @@
+project_id = "selfia-preview"
+
+[functions.selfia-chat]
+verify_jwt = false
+
+[functions.selfia-context]
+verify_jwt = false
+
+[functions.selfia-daily]
+verify_jwt = false
+
+[functions.selfia-discover]
+verify_jwt = false
+
+[functions.selfia-motivation]
+verify_jwt = false
+
+[functions.selfia-onboarding]
+verify_jwt = false
+
+# Each endpoint validates the bearer identity with Auth.getUser before privileged access.
+[functions.selfia-operations]
+verify_jwt = false
+
+# Test-only: authenticated synthetic A can verify erasure of a NEW disposable account.
+[functions.selfia-erasure-drill]
+verify_jwt = false
+

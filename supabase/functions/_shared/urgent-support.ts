@@ -1,0 +1,3 @@
+// Country-neutral help; no model, account or quota is required to display it.
+export const URGENT_SUPPORT_MESSAGE='Si estás en peligro inmediato o temes hacerte daño, contacta ahora con los servicios de emergencia de tu país. Si es seguro, pide a una persona de confianza que te acompañe. No esperes a que vuelva a estar disponible la IA.';
+export const ABUSE_TECH_SAFETY='Si alguien te amenaza o controla tus dispositivos, busca apoyo desde un canal seguro. Antes de cambiar contraseñas, ubicación compartida o accesos, valora con apoyo especializado si esos cambios podrían alertar a esa persona y aumentar el riesgo. Prioriza un plan de seguridad; usar un dispositivo seguro por sí solo no elimina ese riesgo.';
